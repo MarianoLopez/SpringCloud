@@ -1,0 +1,41 @@
+version: '3'
+services:
+  user-service:
+    image: user-service:snapshot
+    container_name: user-service-snapshot
+    ports:
+     - 8080:8080
+    depends_on:
+     - mariadb
+    environment:
+      DB_HOST: mariadb
+      DB_NAME: USERS
+      DB_USERNAME: spring
+      DB_PASSWORD: spring
+  mariadb:
+    image: mariadb
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=example!
+      - MYSQL_DATABASE=USERS
+      - MYSQL_USER=spring
+      - MYSQL_PASSWORD=spring
+    volumes:
+      - ./maria_config/my.cnf:/etc/mysql/my.cnf
+      - ./maria_scripts:/docker-entrypoint-initdb.d
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    depends_on:
+     - mariadb
+    environment:
+      PMA_HOST: mariadb
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+      PMA_USER: root
+      PMA_PASSWORD: example!
+    restart: always
+    ports:
+     - 81:80
