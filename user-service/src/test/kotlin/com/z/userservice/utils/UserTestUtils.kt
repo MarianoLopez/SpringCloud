@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 
 object UserTestUtils {
 
-    fun buildUserResponse(id:Long = 1L, name:String = "Testing",
+    fun buildUserResponse(id:Long = 1L, name:String = "Mariano",
                           state:Boolean = true, service:String = "USER-SERVICE",
                           roles:Set<UserRoles> = UserRoles.values().toSet(),
                           dateTime:LocalDateTime = LocalDateTime.now()): UserResponse {
@@ -20,7 +20,7 @@ object UserTestUtils {
     }
 
     fun buildUserDetails(): UserDetails {
-        val test = "testing"
+        val test = "Mariano"
         return org.springframework.security.core.userdetails.User.builder()
                 .username(test)
                 .password(test)
