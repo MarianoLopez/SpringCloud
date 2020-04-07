@@ -1,5 +1,17 @@
 version: '3'
 services:
+  eureka-service:
+    image: eureka-service:snapshot
+    container_name: eureka-service:snapshot
+    ports:
+     - 8761:8761
+  gateway-service:
+    image: gateway-service:snapshot
+    container_name: gateway-service:snapshot
+    ports:
+     - 9000:9000
+    depends_on:
+      - eureka-service
   user-service:
     image: user-service:snapshot
     container_name: user-service-snapshot
@@ -7,6 +19,7 @@ services:
      - 8080:8080
     depends_on:
      - mariadb
+     - eureka-service
     environment:
       DB_HOST: mariadb
       DB_NAME: USERS
