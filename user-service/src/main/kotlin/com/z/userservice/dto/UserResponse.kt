@@ -8,6 +8,7 @@ import java.time.LocalDateTime
 data class UserResponse(
     val id: Long,
     val name:String,
+    val email:String,
     val state:Boolean,
     val roles:Set<UserRoles>,
     @get:JsonFormat(shape = JsonFormat.Shape.STRING, pattern = defaultDateTimeFormat)

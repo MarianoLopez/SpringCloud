@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.data.domain.PageRequest
 import javax.persistence.EntityManager
+import javax.persistence.PersistenceContext
 import javax.persistence.PersistenceException
 
 
@@ -17,7 +18,7 @@ class UserDaoTest {
 
     @Autowired
     private lateinit var userDao: UserDao
-    @Autowired
+    @PersistenceContext
     private lateinit var entityManager: EntityManager
 
     @Test

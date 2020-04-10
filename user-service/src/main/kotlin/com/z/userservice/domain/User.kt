@@ -1,7 +1,5 @@
 package com.z.userservice.domain
 
-import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY
 import com.z.jwt.domain.UserRoles
 import com.z.zcoreblocking.utils.JpaAuditor
 import org.hibernate.annotations.DynamicUpdate
@@ -19,11 +17,13 @@ data class User (
     @GeneratedValue(strategy =  SEQUENCE, generator = "user_sequence")
     var id:Long? = null,
 
-    @get:JsonProperty(access = WRITE_ONLY)
     var password:String = "",
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     val name:String = "",
+
+    @Column(unique = true, nullable = false)
+    val email:String = "",
 
     var state:Boolean = true,
 

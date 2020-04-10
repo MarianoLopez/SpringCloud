@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import springfox.documentation.annotations.ApiIgnore
-import javax.validation.Valid
 
 @RestController
 @RequestMapping(USER_RESOURCE)
@@ -31,13 +30,12 @@ class UserResource(private val userService: UserService) {
 	}
 
 	@PostMapping
-	fun save(@RequestBody @Valid addUserRequest: AddUserRequest): ResponseEntity<UserResponse> {
-		 //TODO move validations to service layer
+	fun save(@RequestBody addUserRequest: AddUserRequest): ResponseEntity<UserResponse> {
 		return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.save(addUserRequest))
 	}
 
 	@PutMapping
-	fun update(@RequestBody @Valid updateUserRequest: UpdateUserRequest): ResponseEntity<UserResponse> {
+	fun update(@RequestBody updateUserRequest: UpdateUserRequest): ResponseEntity<UserResponse> {
 		return ResponseEntity.ok(this.userService.update(updateUserRequest))
 	}
 

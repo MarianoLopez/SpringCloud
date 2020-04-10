@@ -18,13 +18,17 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import javax.persistence.EntityNotFoundException
+import javax.validation.ConstraintViolation
+import javax.validation.ConstraintViolationException
+import javax.validation.Validator
 
 @Service
 class UserService(private val userDao: UserDao,
 				  private val addUserRequestTransformer: AddUserRequestTransformer,
 				  private val userDetailsTransformer: UserDetailsTransformer,
 				  private val userTransformer: UserTransformer,
-				  private val passwordEncoder: PasswordEncoder): UserDetailsService {
+				  private val passwordEncoder: PasswordEncoder,
+				  private val validator: Validator): UserDetailsService {
 
     override fun loadUserByUsername(username:String): UserDetails {
 		val user = this.userDao.findByName(username)
@@ -42,6 +46,7 @@ class UserService(private val userDao: UserDao,
 
 	@Transactional
 	fun save(addUserRequest: AddUserRequest): UserResponse {
+		validate(addUserRequest)
 		val user = this.addUserRequestTransformer.transform(addUserRequest).apply {
 			this@UserService.encodeUserPasswordIfNotBlank(this)
 		}
@@ -50,12 +55,13 @@ class UserService(private val userDao: UserDao,
 
 	@Transactional
 	fun update(updateUserRequest: UpdateUserRequest): UserResponse {
+		validate(updateUserRequest)
 		val user = this.findUserById(updateUserRequest.id).apply {
 			state = updateUserRequest.state
-			if(roles.isNotEmpty()){
+			if(updateUserRequest.roles.isNotEmpty()){
 				roles.apply {//to avoid the delete all query
-					removeIf { !updateUserRequest.roles.contains(it) }
-					addAll(updateUserRequest.roles)
+					removeIf { !updateUserRequest.roles.contains(it) }//remove those the request not contains
+					addAll(updateUserRequest.roles.filterNot { roles.contains(it) })//add those the original not contains
 				}
 			}
 			if(updateUserRequest.password != null) {
@@ -67,7 +73,7 @@ class UserService(private val userDao: UserDao,
 	}
 
 	fun delete(deleteUserRequest: DeleteUserRequest): UserResponse {
-		return this.update(UpdateUserRequest(id = deleteUserRequest.id))
+		return this.update(UpdateUserRequest(id = deleteUserRequest.id, state = false))
 	}
 
 	fun existsByName(name:String) = this.userDao.existsByName(name)
@@ -84,5 +90,13 @@ class UserService(private val userDao: UserDao,
 
 	private fun findUserById(id:Long): User {
 		return this.userDao.findById(id).orElseThrow { EntityNotFoundException() }
+	}
+
+	@Throws(ConstraintViolationException::class)
+	private fun <T> validate(obj: T) {
+		val result: Set<ConstraintViolation<T>> = validator.validate(obj)
+		if (result.isNotEmpty()) {
+			throw ConstraintViolationException(result)
+		}
 	}
 }

@@ -15,6 +15,9 @@ interface UserDao: PagingAndSortingRepository<User, Long> {
     override fun findAll(pageable: Pageable): Page<User>
 
     @EntityGraph(USER_ROLES_GRAPH)
+    override fun findById(id: Long): Optional<User>
+
+    @EntityGraph(USER_ROLES_GRAPH)
     fun <T> findAllProjectedBy(pageable: Pageable, type:Class<T>): Page<T>
 
     @EntityGraph(USER_ROLES_GRAPH)

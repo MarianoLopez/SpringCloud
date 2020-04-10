@@ -12,6 +12,7 @@ class UserTransformer: Transformer<User, UserResponse> {
         return UserResponse(
                 id = source.id ?: -1L,
                 name = source.name,
+                email = source.email,
                 state = source.state,
                 roles = source.roles,
                 createdDate = source.createdDate,

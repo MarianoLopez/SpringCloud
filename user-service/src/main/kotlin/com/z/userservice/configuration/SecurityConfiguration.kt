@@ -1,10 +1,11 @@
 package com.z.userservice.configuration
 
-import com.z.userservice.utils.ResourceConstant.API_V1
+import com.z.userservice.utils.ResourceConstant.USER_RESOURCE
 import com.z.zcoreblocking.domain.property.RequestAuthProperties
 import com.z.zcoreblocking.security.filter.AuthTokenFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
@@ -26,13 +27,15 @@ class SecurityConfiguration(private val authTokenFilter: AuthTokenFilter,
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
         http
+            .headers().frameOptions().sameOrigin().and()
             .formLogin().disable()
             .logout().disable()
             .httpBasic().disable()
             .csrf().disable()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
             .authorizeRequests().antMatchers(*requestAuthProperties.doNotEval).permitAll().and()
-            .authorizeRequests().antMatchers(API_V1.plus("**")).hasAnyRole("USER").and()
+            .authorizeRequests().antMatchers(HttpMethod.POST, USER_RESOURCE).permitAll().and()
+            .authorizeRequests().antMatchers(USER_RESOURCE.plus("/**")).hasAnyRole("ADMIN").and()
             .authorizeRequests().anyRequest().authenticated().and()
             .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter::class.java)
     }

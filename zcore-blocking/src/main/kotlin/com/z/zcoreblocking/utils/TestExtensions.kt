@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.util.CollectionUtils.toMultiValueMap
 import org.springframework.util.MultiValueMap
 import org.springframework.web.client.RestTemplate
+import java.nio.charset.StandardCharsets
 
 
 fun MockMvc.get(url:String, contentType: MediaType = MediaType.APPLICATION_JSON): ResultActions {
@@ -54,5 +55,6 @@ fun MockHttpServletRequestBuilder.body(
         content(objectMapper.writeValueAsString(body))
         contentType(mediaType)
         accept(mediaType)
+        characterEncoding(StandardCharsets.UTF_8.name())
     }
 }

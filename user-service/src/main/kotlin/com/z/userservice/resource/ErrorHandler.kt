@@ -5,9 +5,11 @@ import com.z.zcoreblocking.domain.ApiResponse
 import com.z.zcoreblocking.utils.groupByFieldMessage
 import com.z.zcoreblocking.utils.toApiResponse
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.FieldError
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
-import org.springframework.web.bind.support.WebExchangeBindException
+import javax.validation.ConstraintViolationException
+
 
 @ControllerAdvice
 class ErrorHandler {
@@ -17,11 +19,13 @@ class ErrorHandler {
 		return ResponseEntity.badRequest().body(exception.toApiResponse())
 	}
 
-	@ExceptionHandler(WebExchangeBindException::class)
-	fun validationExceptionHandler(webExchangeBindException: WebExchangeBindException): ResponseEntity<ApiResponse> {
+	@ExceptionHandler(ConstraintViolationException::class)
+	fun handleConstraintViolation(e: ConstraintViolationException): ResponseEntity<ApiResponse> {
+		val fieldErrors = e.constraintViolations
+				.map { FieldError(it.rootBeanClass.simpleName, it.propertyPath.toString(), it.message) }
 		return ResponseEntity.badRequest().body(ApiResponse(
-			title = WebExchangeBindException::class.java.simpleName,
-			payload = webExchangeBindException.bindingResult.fieldErrors.groupByFieldMessage()
+				title = ConstraintViolationException::class.java.simpleName,
+				payload = fieldErrors.groupByFieldMessage()
 		))
 	}
 }

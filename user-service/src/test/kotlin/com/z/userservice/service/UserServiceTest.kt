@@ -1,8 +1,10 @@
 package com.z.userservice.service
 
+import com.z.jwt.domain.UserRoles
 import com.z.userservice.dao.UserDao
 import com.z.userservice.domain.User
 import com.z.userservice.dto.AddUserRequest
+import com.z.userservice.dto.UpdateUserRequest
 import com.z.userservice.dto.UserResponse
 import com.z.userservice.transformer.AddUserRequestTransformer
 import com.z.userservice.transformer.UserDetailsTransformer
@@ -21,6 +23,8 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import java.util.*
+import javax.validation.ConstraintViolationException
+import javax.validation.Validation
 
 
 @DisplayName("UserService unit tests")
@@ -31,11 +35,12 @@ class UserServiceTest {
     private val mockAddUserTransformer = mock(AddUserRequestTransformer::class.java)
     private val mockUserDetailsTransformer = mock(UserDetailsTransformer::class.java)
     private val mockPasswordEncoder = mock(PasswordEncoder::class.java)
+    private val validator = Validation.buildDefaultValidatorFactory().validator //static =(
 
     private val userService = UserService(
         userDao = mockUserDao, userDetailsTransformer = mockUserDetailsTransformer,
         userTransformer = mockUserTransformer, addUserRequestTransformer = mockAddUserTransformer,
-        passwordEncoder = mockPasswordEncoder)
+        passwordEncoder = mockPasswordEncoder, validator = validator)
 
     @Test
     fun `loadUserByUsername(username) with existent username should return UserDetails`() {
@@ -108,11 +113,13 @@ class UserServiceTest {
     }
 
     @Test
-    fun `save(addUserResponse) should encrypt the user's password, call the dao layer and return UserResponse`() {
-        val addUserRequest = AddUserRequest()
-        val passwordEncoded = "\$2a\$10\$ztBuLyQC9g8iGcS5w46RmeiTvnq8AVmo7KEVjIiMt8/OYOBihYRcG"
+    fun `save(addUserRequest) with valid request should encrypt the user's password, call the dao layer and return UserResponse`() {
+        val userName = "tester"
         val nonEncodedPassword = "nonEncryptedPassword"
-        val user = User(password = nonEncodedPassword)
+        val email = "test@test.com"
+        val addUserRequest = AddUserRequest(password = nonEncodedPassword, name = userName, email = email)
+        val passwordEncoded = "\$2a\$10\$ztBuLyQC9g8iGcS5w46RmeiTvnq8AVmo7KEVjIiMt8/OYOBihYRcG"
+        val user =  User(password = nonEncodedPassword)
         val userResponse = buildUserResponse()
 
         `when`(mockAddUserTransformer.transform(addUserRequest)).thenReturn(user)
@@ -128,6 +135,46 @@ class UserServiceTest {
         verifyNoInteractions(mockUserDetailsTransformer)
         assertThat(response, `is`(userResponse))
         assertThat(user.password, `is`(passwordEncoded))
+    }
+
+    @Test
+    fun `save(addUserRequest) with non valid request should throw ConstraintViolation`() {
+        val userName = "t"
+        val nonEncodedPassword = "t"
+        val email = "invalid"
+        val addUserRequest = AddUserRequest(password = nonEncodedPassword, name = userName, email = email)
+
+        val exception = assertThrows(ConstraintViolationException::class.java) {
+            userService.save(addUserRequest)
+        }
+
+        verifyNoInteractions(mockUserDetailsTransformer, mockAddUserTransformer, mockPasswordEncoder, mockUserDao, mockUserTransformer)
+        val violationFieldNames = exception.constraintViolations.map { it.propertyPath.toString() }
+        assertThat(violationFieldNames, hasSize(3))
+        assertThat(violationFieldNames, containsInAnyOrder("name", "password", "email"))
+    }
+
+    @Test
+    fun `update(addUserResponse) with valid request should update the user's fields`() { //TODO combinations
+        val id = 1L
+        val nonEncodedPassword = "newPassword"
+        val passwordEncoded = "\$2a\$10\$ztBuLyQC9g8iGcS5w46RmeiTvnq8AVmo7KEVjIiMt8/OYOBihYRcG"
+        val state = false
+        val roles = UserRoles.values().toSet()
+        val request = UpdateUserRequest(id = id, password = nonEncodedPassword, state = state, roles = roles)
+        val user = User(id = id)
+
+        `when`(mockUserDao.findById(request.id)).thenReturn(Optional.of(user))
+        `when`(mockPasswordEncoder.encode(nonEncodedPassword)).thenReturn(passwordEncoded)
+        `when`(mockUserDao.save(user)).thenReturn(user)
+        `when`(mockUserTransformer.transform(user)).thenReturn(buildUserResponse())
+        userService.update(request)
+
+        verifyNoInteractions(mockUserDetailsTransformer, mockAddUserTransformer)
+        assertThat(user.id, `is`(id))
+        assertThat(user.state, `is`(state))
+        assertThat(user.password, `is`(passwordEncoded))
+        assertThat(user.roles, equalTo(roles))
     }
 
     @Test
