@@ -1,4 +1,4 @@
-package com.z.zcoreblocking.utils
+package com.z.zcoreblocking.utils.jpa
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.z.jwt.utils.defaultDateTimeFormat

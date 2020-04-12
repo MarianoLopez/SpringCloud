@@ -1,4 +1,4 @@
-package com.z.zcoreblocking.utils
+package com.z.zcoreblocking.utils.test
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper

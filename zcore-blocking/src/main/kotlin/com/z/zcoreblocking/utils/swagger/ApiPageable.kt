@@ -1,4 +1,4 @@
-package com.z.zcoreblocking.utils
+package com.z.zcoreblocking.utils.swagger
 
 import io.swagger.annotations.ApiImplicitParam
 import io.swagger.annotations.ApiImplicitParams

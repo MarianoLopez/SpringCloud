@@ -6,13 +6,12 @@ import com.z.userservice.dto.UpdateUserRequest
 import com.z.userservice.dto.UserResponse
 import com.z.userservice.utils.ResourceConstant.USER_RESOURCE
 import com.z.userservice.utils.UserTestUtils.buildUserResponse
-import com.z.zcoreblocking.utils.body
-import com.z.zcoreblocking.utils.get
+import com.z.zcoreblocking.utils.test.body
+import com.z.zcoreblocking.utils.test.get
 import org.exparity.hamcrest.date.LocalDateTimeMatchers
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.notNullValue
 import org.hamcrest.core.Is.`is`
-import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.test.context.support.WithMockUser

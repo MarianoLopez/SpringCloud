@@ -1,4 +1,4 @@
-package com.z.zcoreblocking.utils
+package com.z.zcoreblocking.utils.exception
 
 import com.z.zcoreblocking.domain.ApiResponse
 import org.springframework.validation.FieldError

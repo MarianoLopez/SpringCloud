@@ -1,7 +1,7 @@
 package com.z.userservice.domain
 
 import com.z.jwt.domain.UserRoles
-import com.z.zcoreblocking.utils.JpaAuditor
+import com.z.zcoreblocking.utils.jpa.JpaAuditor
 import org.hibernate.annotations.DynamicUpdate
 import javax.persistence.*
 import javax.persistence.GenerationType.SEQUENCE

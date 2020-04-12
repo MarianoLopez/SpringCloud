@@ -13,13 +13,17 @@ fun createDocket(prop: SwaggerProperties): Docket {
         .apis(prop.basePath?.let { RequestHandlerSelectors.basePackage(it) } ?: RequestHandlerSelectors.any())
         .paths(PathSelectors.any())
         .build()
-        .globalOperationParameters(listOf(
-            ParameterBuilder()
-                .name("Authorization")
-                .description("Authorization token")
-                .modelRef(ModelRef("string"))
-                .parameterType("header")
-                .required(false)
-                .build()
-        ))
+        .apply {
+            if (prop.globalAuthentication) {
+                this.globalOperationParameters(listOf(
+                    ParameterBuilder()
+                        .name("Authorization")
+                        .description("Authorization token")
+                        .modelRef(ModelRef("string"))
+                        .parameterType("header")
+                        .required(false)
+                        .build()
+                ))
+            }
+        }
 }

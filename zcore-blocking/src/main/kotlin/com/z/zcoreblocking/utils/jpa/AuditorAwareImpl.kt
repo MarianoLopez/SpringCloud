@@ -1,5 +1,6 @@
-package com.z.zcoreblocking.utils
+package com.z.zcoreblocking.utils.jpa
 
+import com.z.zcoreblocking.utils.auth.AuthenticationUtils
 import org.springframework.data.domain.AuditorAware
 import java.util.*
 
