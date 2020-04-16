@@ -2,15 +2,18 @@ import React from "react";
 import {BrowserRouter as Router, Redirect, Route, Switch} from "react-router-dom";
 import LoginPage from "./LoginPage";
 import UserHomePage from "./UserHomePage";
+import AdminHomePage from "./AdminHomePage";
 import ForbiddenPage from "./ForbiddenPage";
 import {useSelector} from "react-redux";
 
 const LOGIN_PATH = '/login';
+const ADMIN_HOME = '/admin';
 const USER_HOME = '/';
 
 const routes = [
     {path: LOGIN_PATH, roles:[], component:LoginPage},
-    {path: USER_HOME, roles:["ROLE_USER"], component:UserHomePage}
+    {path: USER_HOME, roles:["ROLE_USER"], component:UserHomePage},
+    {path: ADMIN_HOME, roles:["ROLE_ADMIN"], component:AdminHomePage}
 ];
 
 export default (...props) => {
@@ -33,8 +36,7 @@ const Routes = () => {
                                  component={route.component} needSome={route.roles}
                                  userRoles={userRoles} />
         } else{
-            return route.path === LOGIN_PATH && userRoles.length > 0 ?
-                null : <Route key={i} path={route.path} exact
+            return  <Route key={i} path={route.path} exact
                               component={route.component} />;
         }
     });

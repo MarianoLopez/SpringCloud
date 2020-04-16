@@ -2,17 +2,16 @@ import {REQUEST_LOGIN, LOGIN_ERROR, TEST} from "./action";
 
 const initialState = {
     test: 'test',
-
     loginResponse: {
         error: null,
         user: {
-            "token": null,
-            "expires": null,
-            "claims": {
-                "authorities": []
+            token: null,
+            expires: null,
+            claims: {
+                authorities: []
             },
-            "subject": null,
-            "enabled": false
+            subject: null,
+            enabled: false
         }
     }
 };

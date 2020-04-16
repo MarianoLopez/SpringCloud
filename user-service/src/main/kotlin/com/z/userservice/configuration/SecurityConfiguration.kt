@@ -13,6 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @Configuration
@@ -38,5 +39,13 @@ class SecurityConfiguration(private val authTokenFilter: AuthTokenFilter,
             .authorizeRequests().antMatchers(USER_RESOURCE.plus("/**")).hasAnyRole("ADMIN").and()
             .authorizeRequests().anyRequest().authenticated().and()
             .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter::class.java)
+    }
+
+    override fun addCorsMappings(registry: CorsRegistry) {
+        registry.addMapping("/**")
+                .allowedOrigins("*")
+                .allowedHeaders("*")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD","OPTIONS")
+                .maxAge(3600)
     }
 }

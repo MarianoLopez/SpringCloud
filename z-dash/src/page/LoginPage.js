@@ -1,24 +1,18 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux'
-import {requestLogin, test} from "../store/action";
+import {requestLogin} from "../store/action";
 import {Header, LoginForm} from '../component'
-import Grid from "@material-ui/core/Grid";
+import {Grid} from "@material-ui/core";
+import Alert from '@material-ui/lab/Alert';
 import Footer from "../component/Footer";
+import {Redirect} from "react-router-dom";
 
 
 export default (...props) => {
-    const {authorities, text} = useSelector(state => ({
-        text: state.test,
-        authorities: state.loginResponse.user.claims.authorities
+    const {authorities, error} = useSelector(state => ({
+        authorities: state.loginResponse.user.claims.authorities,
+        error: state.loginResponse.error
     }));
-
-
-    useEffect(() => {
-        console.log('USE EFFECT', text)
-        console.log('USE EFFECT authorities', authorities)
-    });
-
-
 
     const dispatch = useDispatch();
     const [loginForm, setLoginForm] = useState({
@@ -33,37 +27,29 @@ export default (...props) => {
         })
     };
     const handleLogin = () => {
-        dispatch(test("sarasing"));
         dispatch(requestLogin({...loginForm}))
-            /*.then(()=>{
-                console.log("ajdhfkashdfkhasdjf")
-                checkUserRoles()
-            });*/
     };
 
-  /*  const handleError = () => {
-        if(loginResponse.error){
-            return (
-                <div>{loginResponse.error.title}</div>
-            )
-        }
-    };*/
 
-    function checkUserRoles() {
-        console.log(authorities);
-        const userRoles =authorities;
-        console.log(userRoles)
-        if (userRoles.includes("ROLE_USER")) {
-            console.log("yes")
-            props.history.push('/');
-        }
+    function renderError() {
+        return error ?
+            <Grid container justify="center" direction="row" alignItems="center" style={{margin: 5}}>
+                <Alert severity="error">{error.title || error}</Alert>
+            </Grid> : null;
     }
 
-    return (
-        <Grid container direction="row">
-            <Header/>
-            <LoginForm handleLogin={handleLogin} onFormChange={onFormChange}/>
-            <Footer/>
-        </Grid>
-    );
+    if (authorities.includes("ROLE_ADMIN")) {
+        return <Redirect to='/admin' />
+    } else if (authorities.includes("ROLE_USER")) {
+        return <Redirect to='/' />
+    } else {
+        return (
+            <Grid container direction="row">
+                <Header/>
+                {renderError()}
+                <LoginForm handleLogin={handleLogin} onFormChange={onFormChange}/>
+                <Footer/>
+            </Grid>
+        );
+    }
 }

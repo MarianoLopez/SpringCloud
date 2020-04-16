@@ -4,6 +4,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication
 
 
-data class LoginRequest(val name:String, val password:String) {
-    fun toAuthentication(): Authentication = UsernamePasswordAuthenticationToken(this.name, this.password, emptyList())
+data class LoginRequest(val username:String, val password:String) {
+    fun toAuthentication(): Authentication = UsernamePasswordAuthenticationToken(this.username, this.password, emptyList())
 }
