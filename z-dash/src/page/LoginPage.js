@@ -8,8 +8,9 @@ import LoginController from "./controller/LoginController";
 
 
 export default () => {
-    const {error} = useSelector(state => ({
-        error: state.loginResponse.error
+    const {error, isLoading} = useSelector(state => ({
+        error: state.loginResponse.error,
+        isLoading: state.isLoading
     }));
 
     const dispatch = useDispatch();
@@ -33,7 +34,7 @@ export default () => {
             <Grid container direction="row">
                 <Header/>
                 <ErrorMessage error={error}/>
-                <LoginForm handleLogin={handleLogin} onFormChange={onFormChange}/>
+                <LoginForm handleLogin={handleLogin} onFormChange={onFormChange} isLoading={isLoading}/>
                 <Footer/>
             </Grid>
         </LoginController>

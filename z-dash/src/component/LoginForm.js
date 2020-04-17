@@ -1,8 +1,9 @@
 import React from 'react';
 import {useForm} from 'react-hook-form'
-import {Button, Grid, Paper, TextField} from '@material-ui/core';
+import {Button, CircularProgress, Grid, makeStyles, Paper, TextField} from '@material-ui/core';
 import {Face, Fingerprint} from '@material-ui/icons'
 import {ALPHANUMERIC_5_20, ONLY_LETTERS_5_20} from '../utils/regex'
+import {blue} from "@material-ui/core/colors";
 
 const defaultValidations = {
     username: {
@@ -21,9 +22,24 @@ const defaultValidations = {
     }
 };
 
-export default ({ onFormChange, handleLogin, validations = defaultValidations }) => {
-    const {register, handleSubmit, errors} = useForm();
+const useStyles = makeStyles((theme) => ({
+    wrapper: {
+        margin: theme.spacing(1),
+        position: 'relative',
+    },
+    buttonProgress: {
+        color: blue,
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        marginTop: -12,
+        marginLeft: -12,
+    }
+}));
 
+export default ({onFormChange, handleLogin, isLoading, validations = defaultValidations}) => {
+    const {register, handleSubmit, errors} = useForm();
+    const classes = useStyles();
     return (
         <Grid container justify="center" direction="row" alignItems="center" style={{margin: 10}} className="loginForm">
             <Paper style={{padding: 20}}>
@@ -52,10 +68,13 @@ export default ({ onFormChange, handleLogin, validations = defaultValidations })
                                        fullWidth/>
                         </Grid>
                     </Grid>
-                    <Grid container justify="center" style={{marginTop: '10px'}}>
-                        <Button variant="outlined" color="primary" type="submit" style={{textTransform: "none"}}>
+                    <Grid container justify="center" style={{marginTop: '10px'}} className={classes.wrapper}>
+                        <Button variant="outlined" color="primary"
+                                disabled={isLoading}
+                                type="submit" style={{textTransform: "none"}}>
                             Login
                         </Button>
+                        {isLoading && <CircularProgress size={24} className={classes.buttonProgress}/>}
                     </Grid>
                 </form>
             </Paper>

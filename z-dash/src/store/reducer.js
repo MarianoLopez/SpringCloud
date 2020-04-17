@@ -1,11 +1,20 @@
-import {REQUEST_LOGIN, LOGIN_ERROR} from "./action";
+import {LOGIN_REQUEST, LOGIN_ERROR, LOGIN_IN_PROGRESS} from "./action";
 
 export const userReducer = (state, action) => {
     switch (action.type) {
-        case REQUEST_LOGIN:
+        case LOGIN_REQUEST:
             return updateLoginResponse(state, 'user', action.payload);
         case LOGIN_ERROR:
             return updateLoginResponse(state, 'error', action.payload);
+        case LOGIN_IN_PROGRESS:
+            return {
+                ...state,
+                isLoading: true,
+                loginResponse: {
+                    ...state.loginResponse,
+                    error: null
+                }
+            };
         default:
             return state;
     }
@@ -14,8 +23,10 @@ export const userReducer = (state, action) => {
 const updateLoginResponse = (state, key, value) => {
     return {
         ...state,
+        isLoading: false,
         loginResponse: {
             ...state.loginResponse,
+            error: null,
             [key]: value
         }
     }

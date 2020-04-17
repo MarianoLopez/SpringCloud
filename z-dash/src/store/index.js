@@ -6,6 +6,7 @@ import {userReducer} from './reducer';
 const LOGIN_STORE = 'loginStore';
 
 const initialState = {
+    isLoading: false,
     loginResponse: {
         error: null,
         user: {
