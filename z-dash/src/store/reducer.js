@@ -1,32 +1,11 @@
-import {REQUEST_LOGIN, LOGIN_ERROR, TEST} from "./action";
+import {REQUEST_LOGIN, LOGIN_ERROR} from "./action";
 
-const initialState = {
-    test: 'test',
-    loginResponse: {
-        error: null,
-        user: {
-            token: null,
-            expires: null,
-            claims: {
-                authorities: []
-            },
-            subject: null,
-            enabled: false
-        }
-    }
-};
-
-export const userReducer = (state= initialState, action) => {
+export const userReducer = (state, action) => {
     switch (action.type) {
         case REQUEST_LOGIN:
             return updateLoginResponse(state, 'user', action.payload);
         case LOGIN_ERROR:
             return updateLoginResponse(state, 'error', action.payload);
-        case TEST:
-            return {
-                ...state,
-                test: action.payload
-            };
         default:
             return state;
     }

@@ -5,15 +5,13 @@ import UserHomePage from "./UserHomePage";
 import AdminHomePage from "./AdminHomePage";
 import ForbiddenPage from "./ForbiddenPage";
 import {useSelector} from "react-redux";
-
-const LOGIN_PATH = '/login';
-const ADMIN_HOME = '/admin';
-const USER_HOME = '/';
+import {ADMIN_HOME, LOGIN_PATH, USER_HOME} from "../utils/path";
+import {ROLE_ADMIN, ROLE_USER} from "../utils/role";
 
 const routes = [
     {path: LOGIN_PATH, roles:[], component:LoginPage},
-    {path: USER_HOME, roles:["ROLE_USER"], component:UserHomePage},
-    {path: ADMIN_HOME, roles:["ROLE_ADMIN"], component:AdminHomePage}
+    {path: USER_HOME, roles:[ROLE_USER], component:UserHomePage},
+    {path: ADMIN_HOME, roles:[ROLE_ADMIN], component:AdminHomePage}
 ];
 
 export default (...props) => {
