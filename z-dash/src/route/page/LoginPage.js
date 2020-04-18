@@ -1,10 +1,9 @@
 import React, {useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux'
-import {requestLogin} from "../store/action";
-import {ErrorMessage, Header, LoginForm} from '../component'
+import {requestLogin} from "../../store/action";
+import {ErrorMessage, LoginForm} from '../../component'
 import {Grid} from "@material-ui/core";
-import Footer from "../component/Footer";
-import LoginController from "./controller/LoginController";
+import LoginController from "../controller/LoginController";
 
 
 export default () => {
@@ -32,10 +31,8 @@ export default () => {
     return (
         <LoginController>
             <Grid container direction="row">
-                <Header/>
                 <ErrorMessage error={error}/>
                 <LoginForm handleLogin={handleLogin} onFormChange={onFormChange} isLoading={isLoading}/>
-                <Footer/>
             </Grid>
         </LoginController>
     );

@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import LoginPage from './page/LoginPage';
+import LoginPage from './route/page/LoginPage';
 
 test('renders the login page', () => {
   const { container } = render(<LoginPage />);
