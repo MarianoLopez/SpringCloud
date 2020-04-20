@@ -1,5 +1,5 @@
 import DrawerList from "./DrawerList";
-import React from "react";
+import React, {useEffect} from "react";
 import {AccountCircle} from "@material-ui/icons";
 
 const userItems = [
@@ -9,9 +9,20 @@ const userItems = [
         path: "/admin"
     }
 ];
+const adminKeyPrefix = "adminDrawerList";
+export default ({onSelectItemId, selectedItemId}) => {
+    const setDefaultKey = () => {
+        if (!selectedItemId) {
+            onSelectItemId(`${adminKeyPrefix}-0`);
+        }
+    };
 
-export default () => {
+    useEffect(() => {
+        setDefaultKey();
+    });
+
     return (
-        <DrawerList items={userItems} keyPrefix="userDrawerList"/>
+        <DrawerList items={userItems} keyPrefix={adminKeyPrefix}
+                    onSelectItemId={onSelectItemId} selectedItemId={selectedItemId}/>
     );
 }

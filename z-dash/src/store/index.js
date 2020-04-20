@@ -5,7 +5,7 @@ import {userReducer} from './reducer';
 
 const LOGIN_STORE = 'loginStore';
 
-const initialState = {
+export const initialState = {
     isLoading: false,
     loginResponse: {
         error: null,

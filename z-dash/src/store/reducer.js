@@ -1,4 +1,5 @@
-import {LOGIN_REQUEST, LOGIN_ERROR, LOGIN_IN_PROGRESS} from "./action";
+import {LOGIN_REQUEST, LOGIN_ERROR, LOGIN_IN_PROGRESS, LOGOUT} from "./action";
+import {initialState} from "./index";
 
 export const userReducer = (state, action) => {
     switch (action.type) {
@@ -15,6 +16,8 @@ export const userReducer = (state, action) => {
                     error: null
                 }
             };
+        case LOGOUT:
+            return initialState;
         default:
             return state;
     }

@@ -5,7 +5,7 @@ import List from "@material-ui/core/List";
 import React from "react";
 import {Link} from "react-router-dom";
 
-export default ({items, keyPrefix}) => {
+export default ({items, keyPrefix, selectedItemId, onSelectItemId}) => {
     const RenderIcon = ({icon: Component}) => {
         return Component ?
             <ListItemIcon>
@@ -13,15 +13,19 @@ export default ({items, keyPrefix}) => {
             </ListItemIcon>
             : null
     };
-
     return (
         <List>
-            {items.map((item, index) => (
-                <ListItem button key={`${keyPrefix}-${index}`} component={Link} to={item.path}>
+            {items.map((item, index) => {
+            let id = `${keyPrefix}-${index}`;
+            return (
+                <ListItem button key={id} component={Link} to={item.path}
+                          selected={id === selectedItemId}
+                          onClick={()=> onSelectItemId(id)}>
                         <RenderIcon icon={item.icon}/>
                         <ListItemText primary={item.text}/>
                 </ListItem>
-            ))}
+            )
+            })}
         </List>
     );
 }
