@@ -1,6 +1,6 @@
 import React from "react";
 import {useSelector} from "react-redux";
-import {PersonCard} from "../../component";
+import {PersonCard} from "../../../component";
 
 export default (...props) => {
     const {username, authorities} = useSelector(state => ({

@@ -1,5 +1,5 @@
 import React from "react";
-import {PersonCard} from "../../component";
+import {PersonCard} from "../../../component";
 import {useSelector} from "react-redux";
 
 export default (...props) => {

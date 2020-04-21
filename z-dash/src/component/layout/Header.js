@@ -12,15 +12,14 @@ import Drawer from "@material-ui/core/Drawer";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import Divider from "@material-ui/core/Divider";
-import {ROLE_ADMIN} from "../utils/role";
-import UserDrawerList from "./drawer/UserDrawerList";
-import AdminDrawerList from "./drawer/AdminDrawerList";
+import {ROLE_ADMIN, ROLE_USER} from "../../utils/role";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import {ExitToApp} from "@material-ui/icons";
-import {logout} from "../store/action";
+import {logout} from "../../store/action";
 import {useDispatch} from "react-redux";
+import DrawerList from "../drawer/DrawerList";
 
 const drawerWidth = 240;
 
@@ -88,9 +87,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export default ({user}) => {
-    const isAdmin = () => user.claims.authorities.includes(ROLE_ADMIN);
-
+export default ({user, routes}) => {
     const classes = useStyles();
     const theme = useTheme();
     const dispatch = useDispatch();
@@ -106,33 +103,23 @@ export default ({user}) => {
     };
 
     const DashDrawer = () => {
-        const RenderAdminList = () => {
-            if (isAdmin()) {
-                return (
-                    <>
-                        <AdminDrawerList onSelectItemId={setSelectedItemId} selectedItemId={selectedItemId}/>
-                        <Divider/>
-                    </>
-                )
-            } else {
-                return null;
-            }
-        };
-
-        const RenderUserList = () => {
+        const RenderList = () => {
+            let isAdmin = user.claims.authorities.includes(ROLE_ADMIN);
             return (
                 <>
-                    <UserDrawerList onSelectItemId={setSelectedItemId} selectedItemId={selectedItemId}/>
-                    <Divider/>
-                </>
-            )
-
+                <DrawerList
+                    items={routes.filter(route=> route.roles.includes(isAdmin ? ROLE_ADMIN : ROLE_USER))}
+                    onSelectItemId={setSelectedItemId} selectedItemId={selectedItemId} />
+                <Divider/>
+                <RenderLogout/>
+            </>);
         };
 
         const RenderLogout = () => {
             return (
                 <ListItem button key="logout" onClick={() => {
                     setSelectedItemId(null);
+                    handleDrawerClose();
                     dispatch(logout())
                 }}>
                     <ListItemIcon>
@@ -141,16 +128,6 @@ export default ({user}) => {
                     <ListItemText primary="logout"/>
                 </ListItem>
             );
-        };
-
-        const RenderList = () => {
-            return (
-                <>
-                    <RenderAdminList/>
-                    <RenderUserList/>
-                    <RenderLogout/>
-                </>
-            )
         };
 
         if (user.token) {

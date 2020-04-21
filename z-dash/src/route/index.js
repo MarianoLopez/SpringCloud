@@ -2,17 +2,23 @@ import React from "react";
 import {useSelector} from "react-redux";
 import {BrowserRouter as Router, Switch} from "react-router-dom";
 import {Grid, makeStyles} from "@material-ui/core";
-import {AdminHomePage, LoginPage, RegistrationPage, UserHomePage} from "./page/";
-import {ADMIN_HOME, LOGIN_PATH, REGISTRATION_PATH, USER_HOME} from "../utils/path";
+import {AdminHomePage, LoginPage, RegistrationPage, UserHomePage, UserListPage} from "./page/";
+import {ADMIN_HOME, ADMIN_USER_LIST, LOGIN_PATH, REGISTRATION_PATH, USER_HOME} from "../utils/path";
 import {ROLE_ADMIN, ROLE_USER} from "../utils/role";
 import {Footer, Header} from "../component";
 import Routes from "./Routes";
+import {AccountCircle, List} from "@material-ui/icons";
+
+const createRouteItem = (path, roles, component, icon = null, text = null) => {
+    return {path, roles, component, text, icon}
+};
 
 const routes = [
-    {path: LOGIN_PATH, roles: [], component: LoginPage},
-    {path: REGISTRATION_PATH, roles: [], component: RegistrationPage},
-    {path: USER_HOME, roles: [ROLE_USER], component: UserHomePage},
-    {path: ADMIN_HOME, roles: [ROLE_ADMIN], component: AdminHomePage}
+    createRouteItem(LOGIN_PATH, [], LoginPage),
+    createRouteItem(REGISTRATION_PATH, [], RegistrationPage),
+    createRouteItem(USER_HOME, [ROLE_USER], UserHomePage, AccountCircle, 'Home'),
+    createRouteItem(ADMIN_HOME, [ROLE_ADMIN], AdminHomePage, AccountCircle, 'Home'),
+    createRouteItem(ADMIN_USER_LIST, [ROLE_ADMIN], UserListPage, List, 'User List')
 ];
 
 const useStyles = makeStyles((theme) => ({
@@ -37,7 +43,7 @@ export default () => {
 
     return (
         <Router>
-            <Header user={user}/>
+            <Header user={user} routes={routes}/>
             <main className={classes.content}>
                 <Grid className={classes.toolbar}>
                     <Switch>

@@ -1,13 +1,13 @@
 import React, {useState} from 'react';
-import {ErrorMessage} from '../../component'
+import {ErrorMessage} from '../../../component'
 import {Grid} from "@material-ui/core";
-import RegistrationForm from "../../component/RegistrationForm";
-import {registration} from "../../service/UserService";
-import SuccessMessage from "../../component/SuccessMessage";
+import RegistrationForm from "../../../component/form/RegistrationForm";
+import {registration} from "../../../service/UserService";
+import SuccessMessage from "../../../component/alert/SuccessMessage";
 import Typography from "@material-ui/core/Typography";
 import {Link} from "react-router-dom";
-import {LOGIN_PATH} from "../../utils/path";
-import LoginController from "../controller/LoginController";
+import {LOGIN_PATH} from "../../../utils/path";
+import LoginController from "../../controller/LoginController";
 
 
 export default () => {
