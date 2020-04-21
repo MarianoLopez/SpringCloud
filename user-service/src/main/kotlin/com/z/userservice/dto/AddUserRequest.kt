@@ -14,7 +14,7 @@ data class AddUserRequest (
 
     @field:Pattern(regexp = ONLY_LETTERS_5_20, message = "Should be only letters between 5 and 20 characters")
     @field:NotBlank(message = "Should be not blank")
-    val name:String = "",
+    val username:String = "",
 
     @field:Email(message = "Should be a well-formed email address")
     val email:String = ""
