@@ -42,6 +42,7 @@ class SecurityConfiguration(private val authTokenFilter: AuthTokenFilter,
     }
 
     override fun addCorsMappings(registry: CorsRegistry) {
+        println("sarasing")
         registry.addMapping("/**")
                 .allowedOrigins("*")
                 .allowedHeaders("*")

@@ -1,4 +1,4 @@
-import {login} from '../service/loginService'
+import {login} from '../service/LoginService'
 
 export const LOGIN_REQUEST = 'LOGIN_REQUEST';
 export const LOGIN_IN_PROGRESS = 'LOGIN_IN_PROGRESS';
