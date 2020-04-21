@@ -1,6 +1,5 @@
-import axios from "axios";
-import {BASE_URL} from "./index";
+import axiosInstance from './index'
 
-const USER_URL = `${BASE_URL}/user`;
+const USER_URL = `user`;
 
-export const registration = (addUserRequest) => axios.post(USER_URL, addUserRequest);
+export const registration = (addUserRequest) => axiosInstance.post(USER_URL, addUserRequest);

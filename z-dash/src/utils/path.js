@@ -1,5 +1,5 @@
 const LOGIN_PATH = '/login';
-const REGISTRATION_PATH = '/registration';
+const REGISTRATION_PATH = '/sing-up';
 const ADMIN_HOME = '/admin';
 const USER_HOME = '/';
 

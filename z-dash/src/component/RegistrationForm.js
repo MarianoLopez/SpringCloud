@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export default ({onSubmit, isLoading, validations = {username, password, email}}) => {
+export default ({onSubmit, isLoading, validations = {username, password, email}, disableAll = false}) => {
     const classes = useStyles();
     const {register, handleSubmit, errors} = useForm();
     const [userForm, setUserForm] = useState({
@@ -58,13 +58,14 @@ export default ({onSubmit, isLoading, validations = {username, password, email}}
                                        inputRef={register(validations.username)}
                                        error={!!errors.username}
                                        helperText={errors.username ? errors.username.message : ''}
-                                       size={"medium"} autoFocus/>
+                                       size={"medium"} autoFocus disabled={disableAll}/>
 
                             <TextField id="email" label="email" name="email"
                                        className={classes.input}
                                        inputRef={register(validations.email)}
                                        error={!!errors.email}
                                        helperText={errors.email ? errors.email.message : ''}
+                                       disabled={disableAll}
                             />
                         </Grid>
                     </Grid>
@@ -75,18 +76,20 @@ export default ({onSubmit, isLoading, validations = {username, password, email}}
                                        inputRef={register(validations.password)}
                                        error={!!errors.password}
                                        helperText={errors.password ? errors.password.message : ''}
+                                       disabled={disableAll}
                             />
                             <TextField id="rePassword" name="rePassword" label="rePassword" type="password"
                                        className={classes.input}
                                        inputRef={register(validations.rePassword)}
                                        error={!!errors.rePassword}
                                        helperText={errors.rePassword ? errors.rePassword.message : ''}
+                                       disabled={disableAll}
                             />
                         </Grid>
                     </Grid>
                     <Grid container justify="center" style={{marginTop: '10px'}} className={classes.wrapper}>
                         <Button variant="outlined" color="primary"
-                                disabled={isLoading}
+                                disabled={isLoading || disableAll}
                                 type="submit" style={{textTransform: "none"}}>
                             Submit
                         </Button>

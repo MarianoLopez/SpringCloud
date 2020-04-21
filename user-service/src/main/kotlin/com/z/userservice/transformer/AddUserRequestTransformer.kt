@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component
 class AddUserRequestTransformer: Transformer<AddUserRequest, User> {
 
     override fun transform(source: AddUserRequest): User {
-        return User(password = source.password, name = source.name, email = source.email)
+        return User(password = source.password, name = source.username, email = source.email)
     }
 
 }

@@ -114,10 +114,10 @@ class UserServiceTest {
 
     @Test
     fun `save(addUserRequest) with valid request should encrypt the user's password, call the dao layer and return UserResponse`() {
-        val userName = "tester"
+        val username = "tester"
         val nonEncodedPassword = "nonEncryptedPassword"
         val email = "test@test.com"
-        val addUserRequest = AddUserRequest(password = nonEncodedPassword, name = userName, email = email)
+        val addUserRequest = AddUserRequest(password = nonEncodedPassword, username = username, email = email)
         val passwordEncoded = "\$2a\$10\$ztBuLyQC9g8iGcS5w46RmeiTvnq8AVmo7KEVjIiMt8/OYOBihYRcG"
         val user =  User(password = nonEncodedPassword)
         val userResponse = buildUserResponse()
@@ -139,10 +139,10 @@ class UserServiceTest {
 
     @Test
     fun `save(addUserRequest) with non valid request should throw ConstraintViolation`() {
-        val userName = "t"
+        val username = "t"
         val nonEncodedPassword = "t"
         val email = "invalid"
-        val addUserRequest = AddUserRequest(password = nonEncodedPassword, name = userName, email = email)
+        val addUserRequest = AddUserRequest(password = nonEncodedPassword, username = username, email = email)
 
         val exception = assertThrows(ConstraintViolationException::class.java) {
             userService.save(addUserRequest)

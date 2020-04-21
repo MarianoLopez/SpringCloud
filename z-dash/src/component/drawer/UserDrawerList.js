@@ -7,11 +7,6 @@ const userItems = [
         text: 'Home',
         icon: AccountCircle,
         path: "/"
-    },
-    {
-        text: 'test',
-        icon: AccountCircle,
-        path: "/"
     }
 ];
 const userKeyPrefix = "userDrawerList";

@@ -1,6 +1,5 @@
-import axios from 'axios'
-import {BASE_URL} from "./index";
+import axiosInstance from './index'
 
-const LOGIN_URL = `${BASE_URL}/login`;
+const LOGIN_URL = `login`;
 
-export const login = (username, password) => axios.post(LOGIN_URL, {username, password});
+export const login = (username, password) => axiosInstance.post(LOGIN_URL, {username, password});

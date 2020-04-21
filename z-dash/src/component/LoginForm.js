@@ -4,6 +4,9 @@ import {Button, CircularProgress, Grid, makeStyles, Paper, TextField} from '@mat
 import {Face, Fingerprint} from '@material-ui/icons'
 import {blue} from "@material-ui/core/colors";
 import {password, username} from "../utils/validation";
+import {Link} from "react-router-dom";
+import {LOGIN_PATH, REGISTRATION_PATH} from "../utils/path";
+import Typography from "@material-ui/core/Typography";
 
 const useStyles = makeStyles((theme) => ({
     wrapper: {
@@ -58,6 +61,11 @@ export default ({onFormChange, handleLogin, isLoading, validations = {username, 
                             Login
                         </Button>
                         {isLoading && <CircularProgress size={24} className={classes.buttonProgress}/>}
+                    </Grid>
+                    <Grid container justify="center" alignItems="center" className={classes.wrapper}>
+                        <Typography variant="subtitle2">
+                            <Link to={REGISTRATION_PATH}>Sing up</Link>
+                        </Typography>
                     </Grid>
                 </form>
             </Paper>

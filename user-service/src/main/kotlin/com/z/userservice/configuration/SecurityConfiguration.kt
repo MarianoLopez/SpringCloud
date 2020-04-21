@@ -13,14 +13,14 @@ import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
-import org.springframework.web.servlet.config.annotation.CorsRegistry
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.CorsConfigurationSource
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 @Configuration
 @EnableWebSecurity
 class SecurityConfiguration(private val authTokenFilter: AuthTokenFilter,
-                            private val requestAuthProperties: RequestAuthProperties):
-    WebSecurityConfigurerAdapter(), WebMvcConfigurer {
+                            private val requestAuthProperties: RequestAuthProperties) : WebSecurityConfigurerAdapter() {
 
     @Bean
     fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
@@ -28,25 +28,34 @@ class SecurityConfiguration(private val authTokenFilter: AuthTokenFilter,
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
         http
-            .headers().frameOptions().sameOrigin().and()
-            .formLogin().disable()
-            .logout().disable()
-            .httpBasic().disable()
-            .csrf().disable()
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-            .authorizeRequests().antMatchers(*requestAuthProperties.doNotEval).permitAll().and()
-            .authorizeRequests().antMatchers(HttpMethod.POST, USER_RESOURCE).permitAll().and()
-            .authorizeRequests().antMatchers(USER_RESOURCE.plus("/**")).hasAnyRole("ADMIN").and()
-            .authorizeRequests().anyRequest().authenticated().and()
-            .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter::class.java)
+                .headers().frameOptions().sameOrigin().and()
+                .formLogin().disable()
+                .logout().disable()
+                .httpBasic().disable()
+                .csrf().disable()
+                .cors().configurationSource(corsConfigurationSource()).and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .authorizeRequests().antMatchers(*requestAuthProperties.doNotEval).permitAll().and()
+                .authorizeRequests().antMatchers(HttpMethod.POST, USER_RESOURCE).permitAll().and()
+                .authorizeRequests().antMatchers(USER_RESOURCE.plus("/**")).hasAnyRole("ADMIN").and()
+                .authorizeRequests().anyRequest().authenticated().and()
+                .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter::class.java)
     }
 
-    override fun addCorsMappings(registry: CorsRegistry) {
-        println("sarasing")
-        registry.addMapping("/**")
-                .allowedOrigins("*")
-                .allowedHeaders("*")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD","OPTIONS")
-                .maxAge(3600)
+    @Bean
+    fun corsConfigurationSource(): CorsConfigurationSource {
+        val configuration = CorsConfiguration().apply {
+            allowedOrigins = listOf("*")
+            allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS")
+            allowCredentials = true
+            //the below three lines will add the relevant CORS response headers
+            addAllowedOrigin("*")
+            addAllowedHeader("*")
+            addAllowedMethod("*")
+        }
+
+        return UrlBasedCorsConfigurationSource().apply {
+            registerCorsConfiguration("/**", configuration)
+        }
     }
 }
