@@ -1,6 +1,6 @@
 import {login} from '../service/LoginService'
 
-export const LOGIN_REQUEST = 'LOGIN_REQUEST';
+export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGIN_IN_PROGRESS = 'LOGIN_IN_PROGRESS';
 export const LOGIN_ERROR = 'LOGIN_ERROR';
 export const LOGOUT = 'LOGOUT';
@@ -23,7 +23,7 @@ export const requestLogin = ({username, password}) => {
         return login(username, password)
             .then(res=> {
                 dispatch({
-                    type: LOGIN_REQUEST,
+                    type: LOGIN_SUCCESS,
                     payload: res.data
                 })
             })

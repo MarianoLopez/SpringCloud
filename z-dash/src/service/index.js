@@ -6,4 +6,12 @@ const instance = axios.create({
     withCredentials: true
 });
 
+export function setToken(token) {
+    if (token != null) {
+        instance.defaults.headers.common['Authorization'] = token;
+    } else {
+        delete instance.defaults.headers.common['Authorization']
+    }
+}
+
 export default instance;
