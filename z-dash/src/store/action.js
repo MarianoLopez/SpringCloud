@@ -1,4 +1,4 @@
-import {login} from '../service/LoginService'
+import {login} from '../service/loginService'
 
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGIN_IN_PROGRESS = 'LOGIN_IN_PROGRESS';

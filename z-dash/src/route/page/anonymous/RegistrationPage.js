@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {ErrorMessage} from '../../../component'
 import {Grid} from "@material-ui/core";
 import RegistrationForm from "../../../component/form/RegistrationForm";
-import {registration} from "../../../service/UserService";
+import {registration} from "../../../service/userService";
 import SuccessMessage from "../../../component/alert/SuccessMessage";
 import Typography from "@material-ui/core/Typography";
 import {Link} from "react-router-dom";

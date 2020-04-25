@@ -1,6 +1,6 @@
 import {Grid} from "@material-ui/core";
 import React, {useEffect, useState} from "react";
-import {findAll} from "../../../service/UserService";
+import {findAll} from "../../../service/userService";
 import {ZTable} from "../../../component/table/ZTable";
 import tableConfiguration from "./userTableConfiguration";
 import {ErrorMessage} from "../../../component";
