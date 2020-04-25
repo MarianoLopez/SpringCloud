@@ -1,6 +1,6 @@
 import {Redirect, Route} from "react-router-dom";
 import {LOGIN_PATH} from "../utils/path";
-import ForbiddenPage from "./page/ForbiddenPage";
+import ForbiddenPage from "./page/common/ForbiddenPage";
 import React from "react";
 
 export default ({component: Component, userRoles, needSome, ...rest}) => (

@@ -1,7 +1,9 @@
-import {createStore,applyMiddleware} from 'redux';
+import {createStore, applyMiddleware} from 'redux';
 import thunk from 'redux-thunk';
 import logger from 'redux-logger';
+import {saveAuthToken} from './middleware/axiosMiddleware';
 import {userReducer} from './reducer';
+import {setToken} from "../service";
 
 const LOGIN_STORE = 'loginStore';
 
@@ -21,7 +23,9 @@ export const initialState = {
     }
 };
 const loadState = (defaultState) => {
-    return JSON.parse(localStorage.getItem(LOGIN_STORE)) || defaultState;
+    let data = JSON.parse(localStorage.getItem(LOGIN_STORE)) || defaultState;
+    setToken(data.loginResponse.user.token);
+    return data;
 };
 
 const saveState = (state) => {
@@ -32,7 +36,7 @@ const saveState = (state) => {
     }
 };
 
-const loginStore = createStore(userReducer, loadState(initialState), applyMiddleware(logger, thunk));
+const loginStore = createStore(userReducer, loadState(initialState), applyMiddleware(logger, thunk, saveAuthToken));
 loginStore.subscribe(() => saveState(loginStore.getState()));
 
 export default loginStore;

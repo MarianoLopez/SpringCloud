@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux'
-import {requestLogin} from "../../store/action";
-import {ErrorMessage, LoginForm} from '../../component'
+import {requestLogin} from "../../../store/action";
+import {ErrorMessage, LoginForm} from '../../../component'
 import {Grid} from "@material-ui/core";
-import LoginController from "../controller/LoginController";
+import LoginController from "../../controller/LoginController";
 
 
 export default () => {

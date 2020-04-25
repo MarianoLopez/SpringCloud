@@ -3,9 +3,9 @@ import {useForm} from 'react-hook-form'
 import {Button, CircularProgress, Grid, makeStyles, Paper, TextField} from '@material-ui/core';
 import {Face, Fingerprint} from '@material-ui/icons'
 import {blue} from "@material-ui/core/colors";
-import {password, username} from "../utils/validation";
+import {password, username} from "../../utils/validation";
 import {Link} from "react-router-dom";
-import {LOGIN_PATH, REGISTRATION_PATH} from "../utils/path";
+import {REGISTRATION_PATH} from "../../utils/path";
 import Typography from "@material-ui/core/Typography";
 
 const useStyles = makeStyles((theme) => ({

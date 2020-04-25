@@ -1,7 +1,8 @@
-import AdminHomePage from "./AdminHomePage";
-import ForbiddenPage from "./ForbiddenPage";
-import UserHomePage from "./UserHomePage";
-import LoginPage from "./LoginPage";
-import RegistrationPage from "./RegistrationPage";
+import AdminHomePage from "./admin/AdminHomePage";
+import UserListPage from "./admin/UserListPage";
+import ForbiddenPage from "./common/ForbiddenPage";
+import UserHomePage from "./user/UserHomePage";
+import LoginPage from "./anonymous/LoginPage";
+import RegistrationPage from "./anonymous/RegistrationPage";
 
-export {AdminHomePage, ForbiddenPage, UserHomePage, LoginPage, RegistrationPage}
+export {AdminHomePage, ForbiddenPage, UserHomePage, LoginPage, RegistrationPage, UserListPage}

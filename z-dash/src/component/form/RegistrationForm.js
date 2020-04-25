@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {useForm} from 'react-hook-form'
 import {Button, CircularProgress, Grid, makeStyles, Paper, TextField} from '@material-ui/core';
 import {blue} from "@material-ui/core/colors";
-import {email, password, username} from "../utils/validation";
+import {email, password, username} from "../../utils/validation";
 
 const useStyles = makeStyles((theme) => ({
     wrapper: {
