@@ -3,10 +3,10 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
-import Chip from "@material-ui/core/Chip";
 import CardActions from "@material-ui/core/CardActions";
 import React from "react";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import {RolesChip} from "./RolesChip";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -30,10 +30,7 @@ export default ({username, authorities}) => {
                             <Typography variant="h5" component="h2">{username}</Typography>
                         </Grid>
                         <Grid className={classes.root}>
-                            {authorities
-                                .map((authority, index) =>
-                                    <Chip key={index} label={authority} color="primary"/>)
-                            }
+                            <RolesChip roles={authorities} id={username}/> {/*TODO replace with id*/}
                         </Grid>
                         <Typography color="textSecondary">
                             Welcome back!

@@ -3,9 +3,11 @@ import {Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow}
 import {getKey} from "../../utils/reactUtils";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import TablePagination from "@material-ui/core/TablePagination";
+import {EnhancedTableToolbar} from "../surface/EnhancedTableToolbar";
 
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
     visuallyHidden: {
         border: 0,
         clip: 'rect(0 0 0 0)',
@@ -19,52 +21,79 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-
-export const ZTable = ({data, metadata, handleFetchRequest, pageConfiguration}) => {
+export const ZTable = ({title, configuration, data, isLoading = false, onChange}) => {
     const classes = useStyles();
-    const sortConfig = pageConfiguration.sort.split(",");
+    const sortConfig = configuration.page.sort.split(",");
 
-    const [sort, setSort] = useState({
-        by: sortConfig[0],
-        direction: sortConfig[1]
+    const [page, setPage] = useState({
+       sort: {
+           by: sortConfig[0],
+           direction: sortConfig[1]
+       },
+       number: configuration.page.number,
+       size: configuration.page.size
     });
 
     const handleOrderRequest = (field) => {
-        let isAsc = sort.by === field && sort.direction === 'asc';
+        let isAsc = page.sort.by === field && page.sort.direction === 'asc';
         let _sort = {
             direction: isAsc ? 'desc' : 'asc',
             by: field
         };
-        setSort(_sort);
-        handleFetchRequest(_sort);
+
+        let nextState = {
+            ...page,
+            sort: _sort
+        };
+        setPage(nextState);
+        onChange(nextState);
+    };
+
+    const onChangePage = (event, pageNumber) => {
+        let nextState = {
+            ...page,
+            number: pageNumber
+        };
+        setPage(nextState);
+        onChange(nextState);
+    };
+    
+    const onChangeRowsPerPage = (event, select) => {
+        let pageSize = parseInt(select.key, 10);
+
+        let nextState = {
+            ...page,
+            size: pageSize
+        };
+        setPage(nextState);
+        onChange(nextState);
     };
 
     const isSortingBy = (field) => {
-        return sort.by === field.toString();
+        return page.sort.by === field.toString();
     };
 
     const ZTableHead = () => {
-        const cells = metadata.map(cell => {
-                return (
-                    <TableCell
-                        key={cell.name}
-                        align="center"
-                        sortDirection={isSortingBy(cell.field) ? sort.direction : false}>
-                        <TableSortLabel
-                            active={isSortingBy(cell.field)}
-                            direction={isSortingBy(cell.field) ? sort.direction : 'asc'}
-                            onClick={() => handleOrderRequest(cell.field)}>
-                            {cell.name}
-                            {isSortingBy(cell.field) ?
-                                <span className={classes.visuallyHidden}>
-                                    {sort.direction === 'desc' ? 'sorted descending' : 'sorted ascending'}
+        const cells = configuration.row.map(cell => {
+            return (
+                <TableCell
+                    key={cell.name}
+                    align="center"
+                    sortDirection={isSortingBy(cell.field) ? page.sort.direction : false}>
+                    <TableSortLabel
+                        active={isSortingBy(cell.field)}
+                        direction={isSortingBy(cell.field) ? page.sort.direction : 'asc'}
+                        onClick={() => handleOrderRequest(cell.field)}>
+                        {cell.name}
+                        {isSortingBy(cell.field) ?
+                            <span className={classes.visuallyHidden}>
+                                    {page.sort.direction === 'desc' ? 'sorted descending' : 'sorted ascending'}
                                 </span>
-                                : null
-                            }
-                        </TableSortLabel>
-                    </TableCell>
-                );
-
+                            : null
+                        }
+                    </TableSortLabel>
+                </TableCell>
+            );
         });
         return (
             <TableHead>
@@ -74,21 +103,21 @@ export const ZTable = ({data, metadata, handleFetchRequest, pageConfiguration}) 
     };
 
     const DataRow = ({data}) => {
-        return metadata.map((cell, index) => {
+        return configuration.row.map((cell, index) => {
             return (
                 <TableCell
                     align="center"
                     key={getKey(cell.field, data.id)}
                     component={index === 0 ? "th" : undefined}
                     scope={index === 0 ? "row" : undefined}>
-                    {cell.render(data[cell.field], data.id)}
+                    {!isLoading? cell.render(data[cell.field], data.id) : cell.skeleton()}
                 </TableCell>
             );
         })
     };
 
     const ZTableBody = () => {
-        const body = data.map((row) => (
+        const body = data.content.map((row) => (
             <TableRow key={getKey('userRow', row.id)}>
                 <DataRow data={row}/>
             </TableRow>
@@ -97,11 +126,23 @@ export const ZTable = ({data, metadata, handleFetchRequest, pageConfiguration}) 
     };
 
     return (
-        <TableContainer component={Paper}>
-            <Table aria-label="simple table">
-                <ZTableHead/>
-                <ZTableBody/>
-            </Table>
-        </TableContainer>
+        <Paper>
+            <EnhancedTableToolbar title={title}/>
+            <TableContainer>
+                <Table aria-label="simple table">
+                    <ZTableHead/>
+                    <ZTableBody/>
+                </Table>
+            </TableContainer>
+            <TablePagination
+                rowsPerPageOptions={configuration.page.rowsPerPageOptions}
+                component="div"
+                count={data.totalElements}
+                rowsPerPage={page.size}
+                page={page.number}
+                onChangePage={onChangePage}
+                onChangeRowsPerPage={onChangeRowsPerPage}
+            />
+        </Paper>
     );
 };
