@@ -40,6 +40,18 @@ class UserService(private val userDao: UserDao,
 		return this.userTransformer.transform(this.findUserById(id))
 	}
 
+	fun findAllByUsernameOrEmail(pageable: Pageable, usernameOrEmail:String): Page<UserResponse> {
+		return if(usernameOrEmail.isEmpty()){
+			this.findAll(pageable)
+		} else {
+			this.userDao.findAllByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(
+					name = usernameOrEmail,
+					email = usernameOrEmail,
+					pageable = pageable)
+					.map { userTransformer.transform(it) }
+		}
+	}
+
 	fun findAll(pageable: Pageable): Page<UserResponse> {
 		return this.userDao.findAll(pageable).map { userTransformer.transform(it) }
 	}

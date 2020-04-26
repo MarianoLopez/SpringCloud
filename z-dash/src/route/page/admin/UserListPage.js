@@ -19,7 +19,8 @@ export default () => {
         number: 0,
         size: 10,
         sort: 'name,asc',
-        rowsPerPageOptions: [5, 10, 15, 20]
+        search: '',
+        rowsPerPageOptions: [5, 10, 15, 20, { value: -1, label: 'All' }]
     });
     const [response, setResponse] = useState(defaultResponse);
 
@@ -28,7 +29,8 @@ export default () => {
             ...response,
             isLoading: true
         });
-        findAll(page.number, page.size, page.sort)
+        const {number, size, sort, search} = page;
+        findAll(number, size, sort, search)
             .then(res => {
                 setResponse({
                     error: null,
@@ -48,11 +50,11 @@ export default () => {
     useEffect(fetchData, [page]);
 
     const handleFetchRequest = (_page) => {
+        const {size, number, search, sort} = _page;
         setPage({
             ...page,
-            size: _page.size,
-            number: _page.number,
-            sort: `${_page.sort.by},${_page.sort.direction}`
+            size, number, search,
+            sort: `${sort.by},${sort.direction}`
         });
     };
 
@@ -64,7 +66,8 @@ export default () => {
                         configuration={{row: tableConfiguration, page: page}}
                         data={response.data}
                         isLoading={response.isLoading}
-                        onChange={handleFetchRequest}/>
+                        onChange={handleFetchRequest}
+                        stickyHeader={true}/>
             </Grid>
         </Grid>
     );

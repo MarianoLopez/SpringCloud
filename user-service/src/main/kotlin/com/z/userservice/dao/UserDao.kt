@@ -15,6 +15,11 @@ interface UserDao: PagingAndSortingRepository<User, Long> {
     override fun findAll(pageable: Pageable): Page<User>
 
     @EntityGraph(USER_ROLES_GRAPH)
+    fun findAllByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(name: String,
+                                                                     email: String,
+                                                                     pageable: Pageable): Page<User>
+
+    @EntityGraph(USER_ROLES_GRAPH)
     override fun findById(id: Long): Optional<User>
 
     @EntityGraph(USER_ROLES_GRAPH)

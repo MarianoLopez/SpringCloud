@@ -4,7 +4,8 @@ import {getKey} from "../../utils/reactUtils";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import TablePagination from "@material-ui/core/TablePagination";
-import {EnhancedTableToolbar} from "../surface/EnhancedTableToolbar";
+import {EnhancedTableToolbar} from "./EnhancedTableToolbar";
+import {TablePaginationActions} from "./TablePaginationActions";
 
 
 const useStyles = makeStyles(() => ({
@@ -31,7 +32,8 @@ export const ZTable = ({title, configuration, data, isLoading = false, onChange}
            direction: sortConfig[1]
        },
        number: configuration.page.number,
-       size: configuration.page.size
+       size: configuration.page.size,
+       search: configuration.page.search || ''
     });
 
     const handleOrderRequest = (field) => {
@@ -64,6 +66,16 @@ export const ZTable = ({title, configuration, data, isLoading = false, onChange}
         let nextState = {
             ...page,
             size: pageSize
+        };
+        setPage(nextState);
+        onChange(nextState);
+    };
+
+    const onSearch = (_search) => {
+        console.log("search", _search)
+        let nextState = {
+            ...page,
+            search: _search
         };
         setPage(nextState);
         onChange(nextState);
@@ -127,9 +139,9 @@ export const ZTable = ({title, configuration, data, isLoading = false, onChange}
 
     return (
         <Paper>
-            <EnhancedTableToolbar title={title}/>
+            <EnhancedTableToolbar title={title} onSearch={onSearch}/>
             <TableContainer>
-                <Table aria-label="simple table">
+                <Table aria-label={`${title} table`}>
                     <ZTableHead/>
                     <ZTableBody/>
                 </Table>
@@ -142,6 +154,7 @@ export const ZTable = ({title, configuration, data, isLoading = false, onChange}
                 page={page.number}
                 onChangePage={onChangePage}
                 onChangeRowsPerPage={onChangeRowsPerPage}
+                ActionsComponent={TablePaginationActions}
             />
         </Paper>
     );

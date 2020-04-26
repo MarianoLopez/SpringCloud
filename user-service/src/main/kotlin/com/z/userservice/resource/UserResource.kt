@@ -10,6 +10,7 @@ import com.z.zcoreblocking.utils.swagger.ApiPageable
 import com.z.zcoreblocking.utils.swagger.AuthorizationHeader
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.jpa.repository.Query
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -22,8 +23,8 @@ class UserResource(private val userService: UserService) {
 	@AuthorizationHeader
 	@ApiPageable
     @GetMapping
-    fun findAll(@ApiIgnore pageable:Pageable): ResponseEntity<Page<UserResponse>> {
-		return ResponseEntity.ok(this.userService.findAll(pageable))
+    fun findAll(@ApiIgnore pageable:Pageable, @RequestParam(required = false) search:String?): ResponseEntity<Page<UserResponse>> {
+		return ResponseEntity.ok(this.userService.findAllByUsernameOrEmail(pageable, search ?: ""))
 	}
 
 	@AuthorizationHeader
