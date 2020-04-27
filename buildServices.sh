@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 
 cdToServiceFolder() {
   parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" || exit ; pwd -P )
@@ -75,9 +76,27 @@ buildServices() {
   done
 }
 
+buildFrontEnd() {
+  SERVICE_NAME="z-dash"
+  DOCKER_IMAGE_TAG="snapshot"
+
+  cdToServiceFolder "$SERVICE_NAME"
+
+  npm install
+  npm run-script build
+
+  if isInstalled docker; then
+    buildDockerImage "$SERVICE_NAME" "$DOCKER_IMAGE_TAG"
+  else
+    printError "docker is not installed."
+  fi
+  cd ..
+}
+
 ######################### MAIN #########################
 if isInstalled java; then
   printJavaInfo
+  buildFrontEnd
   installLibraries
   buildServices
 else

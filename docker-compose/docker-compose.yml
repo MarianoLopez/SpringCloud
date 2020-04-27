@@ -1,5 +1,9 @@
 version: '3'
 services:
+  react-frontend:
+    image: z-dash:snapshot
+    ports:
+      - 80:80
   eureka-service:
     image: eureka-service:snapshot
     container_name: eureka-service-snapshot
