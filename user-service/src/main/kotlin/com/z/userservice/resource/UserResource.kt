@@ -6,11 +6,10 @@ import com.z.userservice.dto.UpdateUserRequest
 import com.z.userservice.dto.UserResponse
 import com.z.userservice.service.UserService
 import com.z.userservice.utils.ResourceConstant.USER_RESOURCE
-import com.z.zcoreblocking.utils.swagger.ApiPageable
+import com.z.zcoreblocking.utils.swagger.ApiPageableWithAuth
 import com.z.zcoreblocking.utils.swagger.AuthorizationHeader
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.data.jpa.repository.Query
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -20,8 +19,7 @@ import springfox.documentation.annotations.ApiIgnore
 @RequestMapping(USER_RESOURCE)
 class UserResource(private val userService: UserService) {
 
-	@AuthorizationHeader
-	@ApiPageable
+	@ApiPageableWithAuth
     @GetMapping
     fun findAll(@ApiIgnore pageable:Pageable, @RequestParam(required = false) search:String?): ResponseEntity<Page<UserResponse>> {
 		return ResponseEntity.ok(this.userService.findAllByUsernameOrEmail(pageable, search ?: ""))

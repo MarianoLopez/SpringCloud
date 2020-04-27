@@ -10,20 +10,12 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-interface UserDao: PagingAndSortingRepository<User, Long> {
+interface UserDao: PagingAndSortingRepository<User, Long>, UserRepository {
     @EntityGraph(USER_ROLES_GRAPH)
     override fun findAll(pageable: Pageable): Page<User>
 
     @EntityGraph(USER_ROLES_GRAPH)
-    fun findAllByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(name: String,
-                                                                     email: String,
-                                                                     pageable: Pageable): Page<User>
-
-    @EntityGraph(USER_ROLES_GRAPH)
     override fun findById(id: Long): Optional<User>
-
-    @EntityGraph(USER_ROLES_GRAPH)
-    fun <T> findAllProjectedBy(pageable: Pageable, type:Class<T>): Page<T>
 
     @EntityGraph(USER_ROLES_GRAPH)
     fun findByName(name:String): Optional<User>
