@@ -1,10 +1,6 @@
 import axiosInstance from './index'
 
-let USER_URL = `/api/v1/user`;
-
-if (process.env.NODE_ENV === 'production') {
-    USER_URL = `/user-service${USER_URL}`
-}
+let USER_URL = `/user-service/api/v1/user`;
 
 export const registration = (addUserRequest) => axiosInstance.post(USER_URL, addUserRequest);
 
