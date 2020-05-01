@@ -1,0 +1,37 @@
+version: '3'
+services:
+  jenkins_docker:
+    container_name: jenkins_docker
+    user: root
+    image: docker:dind
+    privileged: true
+    environment:
+      - DOCKER_TLS_CERTDIR:/certs
+    ports:
+      - 2376:2376
+    volumes:
+      - ./jenkins-data:/var/jenkins_home
+      - ./jenkins-docker-certs:/certs/client
+  jenkins:
+    image: jenkinsci/blueocean
+    user: root
+    ports:
+      - 8080:8080
+      - 50000:50000
+    environment:
+      - DOCKER_CERT_PATH:/certs/client
+      - DOCKER_TLS_VERIFY:1
+      - DOCKER_HOST:tcp://docker:2376
+    volumes:
+      - ./jenkins-data:/var/jenkins_home
+      - ./jenkins-docker-certs:/certs/client
+      - /home/jenkins:/home
+    depends_on:
+      - jenkins_docker
+  nexus:
+    image: sonatype/nexus3
+    container_name: nexus
+    volumes:
+      - ./nexus-data:/nexus-data
+    ports:
+      - 8081:8081
