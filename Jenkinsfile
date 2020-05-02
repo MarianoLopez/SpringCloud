@@ -16,7 +16,8 @@ pipeline {
           steps {
             sh '''echo PATH = ${PATH}
 echo M2_HOME = ${M2_HOME}
-echo NEXUS_HOME = ${NEXUS_HOME}
+echo NEXUS_HOST = ${NEXUS_HOST}
+echo NEXUS_PORT = ${NEXUS_PORT}
 echo NEXUS_PASSWORD = ${NEXUS_PASSWORD}'''
           }
         }
@@ -27,16 +28,6 @@ echo NEXUS_PASSWORD = ${NEXUS_PASSWORD}'''
               sh 'mvn clean install -Dmaven.test.skip=true'
             }
 
-          }
-        }
-
-        stage('Just test') {
-          steps {
-            sh '''echo $PATH
-echo $NEXUS_HOST
-echo $NEXUS_PORT
-echo $NEXUS_PASSWORD
-echo $M2_HOME'''
           }
         }
 
