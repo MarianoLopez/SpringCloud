@@ -14,7 +14,7 @@ pipeline {
       steps {
         dir(path: 'jwt') {
           sh 'mvn clean'
-          sh 'deploy -DskipTests'
+          sh 'mvn deploy -DskipTests'
         }
 
       }
