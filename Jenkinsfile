@@ -12,7 +12,9 @@ pipeline {
         stage('Initialize') {
           steps {
             sh '''echo PATH = ${PATH}
-echo M2_HOME = ${M2_HOME}'''
+echo M2_HOME = ${M2_HOME}
+echo NEXUS_HOME = ${NEXUS_HOME}
+echo NEXUS_PASSWORD = ${NEXUS_PASSWORD}'''
           }
         }
 
@@ -47,5 +49,6 @@ echo $M2_HOME'''
   }
   environment {
     M2_HOME = '/root/.m2'
+    NEXUS_HOST = '${NEXUS_HOST}'
   }
 }
