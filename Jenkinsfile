@@ -24,33 +24,17 @@ pipeline {
     }
 
     stage('Build Backend') {
-      parallel {
-        stage('Build Backend') {
-          steps {
-            echo 'Build backend'
-          }
+      steps {
+        dir(path: 'user-service') {
+          sh 'mvn clean package'
         }
 
-        stage('Eureka & Gateway') {
-          steps {
-            dir(path: 'eureka-service') {
-              sh 'mvn clean package -DskipTests'
-            }
-
-            dir(path: 'gateway-service') {
-              sh 'mvn clean package -DskipTests'
-            }
-
-          }
+        dir(path: 'eureka-service') {
+          sh 'mvn clean package -DskipTests'
         }
 
-        stage('Microservices') {
-          steps {
-            dir(path: 'user-service') {
-              sh 'mvn clean package'
-            }
-
-          }
+        dir(path: 'gateway-service') {
+          sh 'mvn clean package -DskipTests'
         }
 
       }
