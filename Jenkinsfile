@@ -13,10 +13,52 @@ pipeline {
     stage('Install Libraries') {
       steps {
         dir(path: 'jwt') {
-          sh 'mvn clean'
-          sh 'mvn deploy -DskipTests'
+          sh 'mvn clean install -DskipTests'
         }
 
+        dir(path: 'zcore-blocking') {
+          sh 'mvn clean install -DskipTests'
+        }
+
+      }
+    }
+
+    stage('Build Backend') {
+      parallel {
+        stage('Build Backend') {
+          steps {
+            echo 'Build backend'
+          }
+        }
+
+        stage('Eureka & Gateway') {
+          steps {
+            dir(path: 'eureka-service') {
+              sh 'mvn clean package -DskipTests'
+            }
+
+            dir(path: 'gateway-service') {
+              sh 'mvn clean package -DskipTests'
+            }
+
+          }
+        }
+
+        stage('Microservices') {
+          steps {
+            dir(path: 'user-service') {
+              sh 'mvn clean package'
+            }
+
+          }
+        }
+
+      }
+    }
+
+    stage('Clean') {
+      steps {
+        cleanWs(cleanWhenAborted: true, cleanWhenFailure: true, cleanWhenNotBuilt: true, cleanWhenSuccess: true, cleanWhenUnstable: true, cleanupMatrixParent: true, deleteDirs: true)
       }
     }
 
