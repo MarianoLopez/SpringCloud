@@ -8,9 +8,29 @@ pipeline {
   }
   stages {
     stage('Initialize') {
-      steps {
-        sh '''echo PATH = ${PATH}
+      parallel {
+        stage('Initialize') {
+          steps {
+            sh '''echo PATH = ${PATH}
 echo M2_HOME = ${M2_HOME}'''
+          }
+        }
+
+        stage('Install Libraries') {
+          steps {
+            dir(path: 'jwt') {
+              sh 'mvn clean install -Dmaven.test.skip=true'
+            }
+
+          }
+        }
+
+        stage('Just test') {
+          steps {
+            sh 'echo $PATH'
+          }
+        }
+
       }
     }
 
