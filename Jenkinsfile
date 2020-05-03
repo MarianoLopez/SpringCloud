@@ -6,7 +6,7 @@ pipeline {
 -e NEXUS_PASSWORD=${NEXUS_PASSWORD}
 -e NEXUS_HOST=${NEXUS_HOST}
 -e NEXUS_PORT=${NEXUS_PORT}
---network=delivery'''
+--network=delivery_delivery'''
     }
 
   }
@@ -44,9 +44,7 @@ pipeline {
 
     stage('Deploy to Nexus') {
       steps {
-        sh '''NEXUS=$(getent hosts nexus | awk \'{ print $1 }\')
-
-curl -v -u "admin:${NEXUS_PASSWORD}" --upload-file "${M2_HOME}/repository/com/z/jwt/0.0.1-SNAPSHOT/jwt-0.0.1-SNAPSHOT.jar" "http://${NEXUS}:${NEXUS_PORT}/repository/maven-releases/com/z/jwt/0.0.1-SNAPSHOT/jwt-0.0.1-SNAPSHOT.jar"'''
+        sh 'curl -v -u "admin:${NEXUS_PASSWORD}" --upload-file "${M2_HOME}/repository/com/z/jwt/0.0.1-SNAPSHOT/jwt-0.0.1-SNAPSHOT.jar" "http://${NEXUS_HOST}:${NEXUS_PORT}/repository/maven-releases/com/z/jwt/0.0.1-SNAPSHOT/jwt-0.0.1-SNAPSHOT.jar"'
       }
     }
 
