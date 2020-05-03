@@ -6,6 +6,8 @@ services:
     ports:
       - 8080:8080
       - 50000:50000
+    networks:
+      - delivery
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./jenkins_home:/var/jenkins_home
@@ -21,3 +23,7 @@ services:
       - ./nexus-data:/nexus-data
     ports:
       - 8081:8081
+    networks:
+      - delivery
+networks:
+  delivery:
