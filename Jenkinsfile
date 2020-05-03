@@ -4,7 +4,6 @@ pipeline {
       image 'maven:3.6.3-jdk-14'
       args '''-v /home/jenkins/.m2:/root/.m2
 -e NEXUS_PASSWORD=${NEXUS_PASSWORD}
--e NEXUS_HOST=$(getent hosts $NEXUS_HOST | awk \'{ print $1 }\')
 -e NEXUS_PORT=${NEXUS_PORT}'''
     }
 
@@ -52,5 +51,6 @@ curl -v -u "admin:${NEXUS_PASSWORD}" --upload-file "${M2_HOME}/repository/com/z/
   }
   environment {
     M2_HOME = '/root/.m2'
+    NEXUS_HOST = '$(getent hosts $NEXUS_HOST | awk \'{ print $1 }\')'
   }
 }
