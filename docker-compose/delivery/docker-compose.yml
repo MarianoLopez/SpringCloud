@@ -15,6 +15,7 @@ services:
     environment:
       NEXUS_HOST: nexus
       NEXUS_PORT: 8081
+      NEXUS_USER: ${NEXUS_USER}
       NEXUS_PASSWORD: ${NEXUS_PASSWORD}
   nexus:
     image: sonatype/nexus3
