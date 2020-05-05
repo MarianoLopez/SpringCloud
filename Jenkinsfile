@@ -17,7 +17,7 @@ pipeline {
       steps {
         dir(path: 'z-dash') {
           sh '''ls -la
-
+pwd
 npm ci --silent
 
 npm install react-scripts@3.4.1 -g --silent
