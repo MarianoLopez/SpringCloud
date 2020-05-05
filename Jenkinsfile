@@ -5,6 +5,7 @@ pipeline {
       agent {
           docker {
             image 'maven:3.6.3-jdk-14'
+            args '''-v ${M2_HOME}:/root/.m2'''
           }
       }
       steps {
@@ -23,6 +24,7 @@ pipeline {
       agent {
         docker {
           image 'maven:3.6.3-jdk-14'
+          args '''-v ${M2_HOME}:/root/.m2'''
         }
       }
       steps {
@@ -45,6 +47,7 @@ pipeline {
       agent {
         docker {
           image 'maven:3.6.3-jdk-14'
+          args '''-v ${M2_HOME}:/root/.m2'''
         }
       }
       steps {
@@ -75,6 +78,7 @@ npm run build'''
     }
 
     stage('Deploy to Nexus') {
+    agent {
       docker {
           image 'maven:3.6.3-jdk-14'
           args '''-v ${M2_HOME}:/root/.m2
@@ -84,6 +88,7 @@ npm run build'''
                 -e NEXUS_PORT=${NEXUS_PORT}
                 --network=delivery_delivery'''
       }
+    }
       steps {
         dir(path: 'jwt') {
           sh 'mvn deploy -DskipTests -Dmaven.install.skip=true -Dnexus.port=$NEXUS_PORT -Dnexus.host=$NEXUS_HOST'
