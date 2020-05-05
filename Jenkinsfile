@@ -5,7 +5,7 @@ pipeline {
       agent {
         docker {
           image 'node:13.12.0-alpine'
-          args ''' -v $PWD/z-dash/node_modules:${NODE_MODULES}
+          args '''-v ${NODE_MODULES}:$PWD/z-dash/node_modules
 -e NEXUS_PASSWORD=${NEXUS_PASSWORD}
 -e NEXUS_USER=${NEXUS_USER}
 -e NEXUS_HOST=${NEXUS_HOST}
