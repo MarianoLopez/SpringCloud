@@ -3,10 +3,11 @@ pipeline {
   stages {
     stage('Clean & Install Libraries') {
       agent {
-          docker {
-            image 'maven:3.6.3-jdk-14'
-            args '''-v ${M2_HOME}:/root/.m2'''
-          }
+        docker {
+          image 'maven:3.6.3-jdk-14'
+          args '-v ${M2_HOME}:/root/.m2'
+        }
+
       }
       steps {
         dir(path: 'jwt') {
@@ -24,8 +25,9 @@ pipeline {
       agent {
         docker {
           image 'maven:3.6.3-jdk-14'
-          args '''-v ${M2_HOME}:/root/.m2'''
+          args '-v ${M2_HOME}:/root/.m2'
         }
+
       }
       steps {
         dir(path: 'user-service') {
@@ -47,8 +49,9 @@ pipeline {
       agent {
         docker {
           image 'maven:3.6.3-jdk-14'
-          args '''-v ${M2_HOME}:/root/.m2'''
+          args '-v ${M2_HOME}:/root/.m2'
         }
+
       }
       steps {
         dir(path: 'user-service') {
@@ -78,8 +81,8 @@ npm run build'''
     }
 
     stage('Deploy to Nexus') {
-    agent {
-      docker {
+      agent {
+        docker {
           image 'maven:3.6.3-jdk-14'
           args '''-v ${M2_HOME}:/root/.m2
                 -e NEXUS_PASSWORD=${NEXUS_PASSWORD}
@@ -87,8 +90,9 @@ npm run build'''
                 -e NEXUS_HOST=${NEXUS_HOST}
                 -e NEXUS_PORT=${NEXUS_PORT}
                 --network=delivery_delivery'''
+        }
+
       }
-    }
       steps {
         dir(path: 'jwt') {
           sh 'mvn deploy -DskipTests -Dmaven.install.skip=true -Dnexus.port=$NEXUS_PORT -Dnexus.host=$NEXUS_HOST'
@@ -108,6 +112,12 @@ npm run build'''
 
         dir(path: 'gateway-service') {
           sh 'mvn deploy -DskipTests -Dmaven.install.skip=true -Dnexus.port=$NEXUS_PORT -Dnexus.host=$NEXUS_HOST'
+        }
+
+        dir(path: 'z-dash') {
+          sh '''pwd
+ls -la
+ls build/'''
         }
 
       }
