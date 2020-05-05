@@ -55,7 +55,7 @@ pipeline {
       }
       steps {
         dir(path: 'user-service') {
-          sh 'mvn surefire:test -f pom.xml'
+          sh 'mvn test'
         }
 
       }
@@ -72,10 +72,6 @@ pipeline {
       steps {
         dir(path: 'z-dash') {
           sh '''npm ci --silent
-
-ls node_modules
-
-npm install react-scripts@3.4.1 --silent
 
 npm run build'''
         }
