@@ -22,35 +22,24 @@ pipeline {
     }
 
     stage('Clean & Build Backend') {
-      parallel {
-        stage('Clean & Build Backend') {
-          agent {
-            docker {
-              image 'maven:3.6.3-jdk-14'
-              args '-v ${M2_HOME}:/root/.m2'
-            }
-
-          }
-          steps {
-            dir(path: 'user-service') {
-              sh 'mvn clean package -DskipTests'
-            }
-
-            dir(path: 'eureka-service') {
-              sh 'mvn clean package -DskipTests'
-            }
-
-            dir(path: 'gateway-service') {
-              sh 'mvn clean package -DskipTests'
-            }
-
-          }
+      agent {
+        docker {
+          image 'maven:3.6.3-jdk-14'
+          args '-v ${M2_HOME}:/root/.m2'
         }
 
-        stage('Maybe Front') {
-          steps {
-            sh 'echo \'hi\''
-          }
+      }
+      steps {
+        dir(path: 'user-service') {
+          sh 'mvn clean package -DskipTests'
+        }
+
+        dir(path: 'eureka-service') {
+          sh 'mvn clean package -DskipTests'
+        }
+
+        dir(path: 'gateway-service') {
+          sh 'mvn clean package -DskipTests'
         }
 
       }
