@@ -5,7 +5,6 @@ pipeline {
       agent {
           docker {
             image 'maven:3.6.3-jdk-14'
-            args '''-v ${M2_HOME}:/root/.m2'''
           }
       }
       steps {
@@ -24,7 +23,6 @@ pipeline {
       agent {
         docker {
           image 'maven:3.6.3-jdk-14'
-          args '''-v ${M2_HOME}:/root/.m2'''
         }
       }
       steps {
@@ -47,7 +45,6 @@ pipeline {
       agent {
         docker {
           image 'maven:3.6.3-jdk-14'
-          args '''-v ${M2_HOME}:/root/.m2'''
         }
       }
       steps {
