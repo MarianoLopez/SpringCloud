@@ -55,7 +55,7 @@ pipeline {
       }
       steps {
         dir(path: 'user-service') {
-          sh 'mvn surefire:test'
+          sh 'mvn surefire:test -f pom.xml'
         }
 
       }
@@ -65,12 +65,17 @@ pipeline {
       agent {
         docker {
           image 'node:13.12.0-alpine'
+          args '-v ${NPM_CACHE}:/root/.npm'
         }
 
       }
       steps {
         dir(path: 'z-dash') {
-          sh '''npm install -g
+          sh '''npm ci --silent
+
+ls node_modules
+
+npm install react-scripts@3.4.1 --silent
 
 npm run build'''
         }
@@ -137,6 +142,6 @@ cat /root/.m2/settings.xml'''
   }
   environment {
     M2_HOME = '/root/jenkins/.m2'
-    NODE_MODULES = '/root/jenkins/node_modules'
+    NPM_CACHE = '/root/jenkins/.npm'
   }
 }
