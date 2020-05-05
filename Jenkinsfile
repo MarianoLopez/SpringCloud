@@ -12,7 +12,7 @@ pipeline {
 
   }
   stages {
-    stage('Install Libraries') {
+    stage('Clean & Install Libraries') {
       steps {
         sh '''echo $NEXUS_HOST
 echo $NEXUS_USER
@@ -28,10 +28,10 @@ cat $M2_HOME/settings.xml'''
       }
     }
 
-    stage('Build Backend') {
+    stage('Clean & Build Backend') {
       steps {
-        dir(path: 'user-service') {
-          sh 'mvn clean package -DskipTests'
+        dir(path: 'user-service -DskipTests') {
+          sh 'mvn clean package'
         }
 
         dir(path: 'eureka-service') {
@@ -48,7 +48,23 @@ cat $M2_HOME/settings.xml'''
     stage('Deploy to Nexus') {
       steps {
         dir(path: 'jwt') {
-          sh 'mvn deploy -DskipTests -Dmaven.install.skip=true'
+          sh 'mvn deploy -DskipTests -Dmaven.install.skip=true -Dnexus.port=$NEXUS_PORT -Dnexus.host=$NEXUS_HOST'
+        }
+
+        dir(path: 'zcore-blocking') {
+          sh 'mvn deploy -DskipTests -Dmaven.install.skip=true -Dnexus.port=$NEXUS_PORT -Dnexus.host=$NEXUS_HOST'
+        }
+
+        dir(path: 'user-service') {
+          sh 'mvn deploy -DskipTests -Dmaven.install.skip=true -Dnexus.port=$NEXUS_PORT -Dnexus.host=$NEXUS_HOST'
+        }
+
+        dir(path: 'eureka-service') {
+          sh 'mvn deploy -DskipTests -Dmaven.install.skip=true -Dnexus.port=$NEXUS_PORT -Dnexus.host=$NEXUS_HOST'
+        }
+
+        dir(path: 'gateway-service') {
+          sh 'mvn deploy -DskipTests -Dmaven.install.skip=true -Dnexus.port=$NEXUS_PORT -Dnexus.host=$NEXUS_HOST'
         }
 
       }
