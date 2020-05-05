@@ -1,18 +1,13 @@
 pipeline {
-  agent {
-    docker {
-      image 'maven:3.6.3-jdk-14'
-      args '''-v /home/jenkins/.m2:/root/.m2
--e NEXUS_PASSWORD=${NEXUS_PASSWORD}
--e NEXUS_USER=${NEXUS_USER}
--e NEXUS_HOST=${NEXUS_HOST}
--e NEXUS_PORT=${NEXUS_PORT}
---network=delivery_delivery'''
-    }
-
-  }
+  agent none
   stages {
     stage('Clean & Install Libraries') {
+      agent {
+          docker {
+            image 'maven:3.6.3-jdk-14'
+            args '''-v ${M2_HOME}:/root/.m2'''
+          }
+      }
       steps {
         dir(path: 'jwt') {
           sh 'mvn clean install -DskipTests'
@@ -26,6 +21,12 @@ pipeline {
     }
 
     stage('Clean & Build Backend') {
+      agent {
+        docker {
+          image 'maven:3.6.3-jdk-14'
+          args '''-v ${M2_HOME}:/root/.m2'''
+        }
+      }
       steps {
         dir(path: 'user-service') {
           sh 'mvn clean package -DskipTests'
@@ -43,6 +44,12 @@ pipeline {
     }
 
     stage('Backend Tests') {
+      agent {
+        docker {
+          image 'maven:3.6.3-jdk-14'
+          args '''-v ${M2_HOME}:/root/.m2'''
+        }
+      }
       steps {
         dir(path: 'user-service') {
           sh 'mvn surefire:test'
@@ -55,11 +62,6 @@ pipeline {
       agent {
         docker {
           image 'node:13.12.0-alpine'
-          args '''-e NEXUS_PASSWORD=${NEXUS_PASSWORD}
--e NEXUS_USER=${NEXUS_USER}
--e NEXUS_HOST=${NEXUS_HOST}
--e NEXUS_PORT=${NEXUS_PORT}
---network=delivery_delivery'''
         }
 
       }
@@ -76,6 +78,15 @@ npm run build'''
     }
 
     stage('Deploy to Nexus') {
+      docker {
+          image 'maven:3.6.3-jdk-14'
+          args '''-v ${M2_HOME}:/root/.m2
+                -e NEXUS_PASSWORD=${NEXUS_PASSWORD}
+                -e NEXUS_USER=${NEXUS_USER}
+                -e NEXUS_HOST=${NEXUS_HOST}
+                -e NEXUS_PORT=${NEXUS_PORT}
+                --network=delivery_delivery'''
+      }
       steps {
         dir(path: 'jwt') {
           sh 'mvn deploy -DskipTests -Dmaven.install.skip=true -Dnexus.port=$NEXUS_PORT -Dnexus.host=$NEXUS_HOST'
@@ -108,6 +119,6 @@ npm run build'''
 
   }
   environment {
-    M2_HOME = '/root/.m2'
+    M2_HOME = '/root/jenkins/.m2'
   }
 }
