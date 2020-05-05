@@ -51,36 +51,7 @@ pipeline {
       }
     }
 
-    stage('Deploy to Nexus') {
-      steps {
-        dir(path: 'jwt') {
-          sh 'mvn deploy -DskipTests -Dmaven.install.skip=true -Dnexus.port=$NEXUS_PORT -Dnexus.host=$NEXUS_HOST'
-        }
-
-        dir(path: 'zcore-blocking') {
-          sh 'mvn deploy -DskipTests -Dmaven.install.skip=true -Dnexus.port=$NEXUS_PORT -Dnexus.host=$NEXUS_HOST'
-        }
-
-        dir(path: 'user-service') {
-          sh 'mvn deploy -DskipTests -Dmaven.install.skip=true -Dnexus.port=$NEXUS_PORT -Dnexus.host=$NEXUS_HOST'
-        }
-
-        dir(path: 'eureka-service') {
-          sh 'mvn deploy -DskipTests -Dmaven.install.skip=true -Dnexus.port=$NEXUS_PORT -Dnexus.host=$NEXUS_HOST'
-        }
-
-        dir(path: 'gateway-service') {
-          sh 'mvn deploy -DskipTests -Dmaven.install.skip=true -Dnexus.port=$NEXUS_PORT -Dnexus.host=$NEXUS_HOST'
-        }
-
-      }
-    }
-
-    stage('Clean workspace') {
-      steps {
-        cleanWs(cleanWhenSuccess: true, cleanupMatrixParent: true, deleteDirs: true, skipWhenFailed: true)
-      }
-    }
+    
 
   }
   environment {
