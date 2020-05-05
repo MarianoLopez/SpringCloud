@@ -5,7 +5,7 @@ pipeline {
       agent {
         docker {
           image 'node:13.12.0-alpine'
-          args '''-v ${NODE_MODULES}:/var/jenkins_home/workspace/gCloud_feature_jenkins-blueocean/z-dash/node_modules
+          args ''' -v $PWD/z-dash/node_modules:${NODE_MODULES}
 -e NEXUS_PASSWORD=${NEXUS_PASSWORD}
 -e NEXUS_USER=${NEXUS_USER}
 -e NEXUS_HOST=${NEXUS_HOST}
@@ -21,7 +21,7 @@ ls -la
 pwd
 npm ci --silent
 
-npm install react-scripts@3.4.1 -g --silent
+npm install react-scripts@3.4.1 --silent
 
 ls -la
 
@@ -33,7 +33,7 @@ npm run build'''
 
   }
   environment {
-    M2_HOME = '/root/.m2'
-    NODE_MODULES = '/root/node_modules'
+    M2_HOME = '/root/jenkins/.m2'
+    NODE_MODULES = '/root/jenkins/node_modules'
   }
 }
