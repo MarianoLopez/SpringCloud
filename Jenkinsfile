@@ -5,7 +5,7 @@ pipeline {
       agent {
         docker {
           image 'node:13.12.0-alpine'
-          args '''-v ${NODE_MODULES}:$(pwd)/z-dash/node_modules
+          args '''-v ${NODE_MODULES}:/z-dash/node_modules
 -e NEXUS_PASSWORD=${NEXUS_PASSWORD}
 -e NEXUS_USER=${NEXUS_USER}
 -e NEXUS_HOST=${NEXUS_HOST}
@@ -16,7 +16,8 @@ pipeline {
       }
       steps {
         dir(path: 'z-dash') {
-          sh '''ls -la
+          sh '''ls /
+ls -la
 pwd
 npm ci --silent
 
