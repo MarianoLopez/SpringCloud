@@ -12,46 +12,31 @@ pipeline {
 
   }
   stages {
-    stage('Clean & Install Libraries') {
-      steps {
-        dir(path: 'jwt') {
-          sh 'mvn clean install -DskipTests'
+    stage('Build Frontend') {
+      agent {
+        docker {
+          image 'node:13.12.0-alpine'
+          args '''-v ${PWD}:/app  
+-v /app/node_modules
+-e NEXUS_PASSWORD=${NEXUS_PASSWORD}
+-e NEXUS_USER=${NEXUS_USER}
+-e NEXUS_HOST=${NEXUS_HOST}
+-e NEXUS_PORT=${NEXUS_PORT}
+--network=delivery_delivery'''
         }
 
-        dir(path: 'zcore-blocking') {
-          sh 'mvn clean install -DskipTests'
+      }
+      steps {
+        dir(path: 'z-dash') {
+          sh '''npm ci
+
+npm install react-scripts@3.4.1 -g
+
+npm run build'''
         }
 
       }
     }
-
-    stage('Clean & Build Backend') {
-      steps {
-        dir(path: 'user-service') {
-          sh 'mvn clean package -DskipTests'
-        }
-
-        dir(path: 'eureka-service') {
-          sh 'mvn clean package -DskipTests'
-        }
-
-        dir(path: 'gateway-service') {
-          sh 'mvn clean package -DskipTests'
-        }
-
-      }
-    }
-
-    stage('Backend Tests') {
-      steps {
-        dir(path: 'user-service') {
-          sh 'mvn surefire:test'
-        }
-
-      }
-    }
-
-    
 
   }
   environment {
