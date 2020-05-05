@@ -10,6 +10,7 @@ pipeline {
 
       }
       steps {
+        sh 'cat /root/.m2/settings.xml'
         dir(path: 'jwt') {
           sh 'mvn clean install -DskipTests'
         }
