@@ -47,6 +47,7 @@ pipeline {
         dir(path: 'user-service') {
           sh 'mvn surefire:test'
         }
+
       }
     }
 
@@ -72,6 +73,12 @@ pipeline {
           sh 'mvn deploy -DskipTests -Dmaven.install.skip=true -Dnexus.port=$NEXUS_PORT -Dnexus.host=$NEXUS_HOST'
         }
 
+      }
+    }
+
+    stage('Clean workspace') {
+      steps {
+        cleanWs(cleanWhenSuccess: true, cleanupMatrixParent: true, deleteDirs: true, skipWhenFailed: true)
       }
     }
 
