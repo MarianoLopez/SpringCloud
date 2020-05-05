@@ -22,24 +22,35 @@ pipeline {
     }
 
     stage('Clean & Build Backend') {
-      agent {
-        docker {
-          image 'maven:3.6.3-jdk-14'
-          args '-v ${M2_HOME}:/root/.m2'
+      parallel {
+        stage('Clean & Build Backend') {
+          agent {
+            docker {
+              image 'maven:3.6.3-jdk-14'
+              args '-v ${M2_HOME}:/root/.m2'
+            }
+
+          }
+          steps {
+            dir(path: 'user-service') {
+              sh 'mvn clean package -DskipTests'
+            }
+
+            dir(path: 'eureka-service') {
+              sh 'mvn clean package -DskipTests'
+            }
+
+            dir(path: 'gateway-service') {
+              sh 'mvn clean package -DskipTests'
+            }
+
+          }
         }
 
-      }
-      steps {
-        dir(path: 'user-service') {
-          sh 'mvn clean package -DskipTests'
-        }
-
-        dir(path: 'eureka-service') {
-          sh 'mvn clean package -DskipTests'
-        }
-
-        dir(path: 'gateway-service') {
-          sh 'mvn clean package -DskipTests'
+        stage('Maybe Front') {
+          steps {
+            sh 'echo \'hi\''
+          }
         }
 
       }
@@ -74,6 +85,7 @@ pipeline {
           sh '''npm ci --silent
 
 npm run build'''
+          stash(name: 'build-z-dash', includes: 'build/**')
         }
 
       }
@@ -94,12 +106,12 @@ npm run build'''
       }
       steps {
         dir(path: 'z-dash') {
+          unstash 'build-z-dash'
           sh '''echo $NEXUS_USER
 echo $NEXUS_PASSWORD
 
 pwd
 ls -la
-ls build/
 
 ls -la /root/.m2/
 
