@@ -14,9 +14,6 @@ pipeline {
   stages {
     stage('Clean & Install Libraries') {
       steps {
-        sh '''echo $NEXUS_HOST
-echo $NEXUS_USER
-cat $M2_HOME/settings.xml'''
         dir(path: 'jwt') {
           sh 'mvn clean install -DskipTests'
         }
@@ -30,8 +27,8 @@ cat $M2_HOME/settings.xml'''
 
     stage('Clean & Build Backend') {
       steps {
-        dir(path: 'user-service -DskipTests') {
-          sh 'mvn clean package'
+        dir(path: 'user-service') {
+          sh 'mvn clean package -DskipTests'
         }
 
         dir(path: 'eureka-service') {
