@@ -42,6 +42,14 @@ pipeline {
       }
     }
 
+    stage('Backend Tests') {
+      steps {
+        dir(path: 'user-service') {
+          sh 'mvn surefire:test'
+        }
+      }
+    }
+
     stage('Deploy to Nexus') {
       steps {
         dir(path: 'jwt') {
