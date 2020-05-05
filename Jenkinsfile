@@ -70,9 +70,7 @@ pipeline {
       }
       steps {
         dir(path: 'z-dash') {
-          sh '''npm ci --silent
-
-npm install react-scripts@3.4.1 -g --silent
+          sh '''npm install -g
 
 npm run build'''
         }
@@ -94,6 +92,19 @@ npm run build'''
 
       }
       steps {
+        dir(path: 'z-dash') {
+          sh '''echo $NEXUS_USER
+echo $NEXUS_PASSWORD
+
+pwd
+ls -la
+ls build/
+
+ls -la /root/.m2/
+
+cat /root/.m2/settings.xml'''
+        }
+
         dir(path: 'jwt') {
           sh 'mvn deploy -DskipTests -Dmaven.install.skip=true -Dnexus.port=$NEXUS_PORT -Dnexus.host=$NEXUS_HOST'
         }
@@ -114,12 +125,6 @@ npm run build'''
           sh 'mvn deploy -DskipTests -Dmaven.install.skip=true -Dnexus.port=$NEXUS_PORT -Dnexus.host=$NEXUS_HOST'
         }
 
-        dir(path: 'z-dash') {
-          sh '''pwd
-ls -la
-ls build/'''
-        }
-
       }
     }
 
@@ -132,5 +137,6 @@ ls build/'''
   }
   environment {
     M2_HOME = '/root/jenkins/.m2'
+    NODE_MODULES = '/root/jenkins/node_modules'
   }
 }
