@@ -47,14 +47,31 @@ pipeline {
         dir(path: 'user-service') {
           sh 'mvn surefire:test'
         }
+
       }
     }
 
     stage('Frontend build') {
+      agent {
+        docker {
+          image 'node:13.12.0-alpine'
+          args '''-e NEXUS_PASSWORD=${NEXUS_PASSWORD}
+-e NEXUS_USER=${NEXUS_USER}
+-e NEXUS_HOST=${NEXUS_HOST}
+-e NEXUS_PORT=${NEXUS_PORT}
+--network=delivery_delivery'''
+        }
+
+      }
       steps {
         dir(path: 'z-dash') {
-          sh 'echo front'
+          sh '''npm ci --silent
+
+npm install react-scripts@3.4.1 -g --silent
+
+npm run build'''
         }
+
       }
     }
 
