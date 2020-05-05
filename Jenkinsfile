@@ -23,6 +23,7 @@ pipeline {
     }
 
     stage('Clean & Build Backend') {
+      options { skipDefaultCheckout() }
       agent {
         docker {
           image 'maven:3.6.3-jdk-14'
@@ -133,7 +134,7 @@ cat /root/.m2/settings.xml'''
 
     stage('Clean workspace') {
       steps {
-        cleanWs(cleanWhenSuccess: true, cleanupMatrixParent: true, deleteDirs: true, skipWhenFailed: true)
+        cleanWs()
       }
     }
 
