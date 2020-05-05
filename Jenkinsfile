@@ -5,7 +5,7 @@ pipeline {
       agent {
         docker {
           image 'node:13.12.0-alpine'
-          args '''-v ${NODE_MODULES}:/node_modules
+          args '''-v ${NODE_MODULES}:node_modules
 -e NEXUS_PASSWORD=${NEXUS_PASSWORD}
 -e NEXUS_USER=${NEXUS_USER}
 -e NEXUS_HOST=${NEXUS_HOST}
@@ -21,6 +21,8 @@ pipeline {
 npm ci --silent
 
 npm install react-scripts@3.4.1 -g --silent
+
+ls -la
 
 npm run build'''
         }
