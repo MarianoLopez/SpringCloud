@@ -1,4 +1,4 @@
-#!bin/bash
+#!/bin/bash
 
 npm ci --silent
 npm run build

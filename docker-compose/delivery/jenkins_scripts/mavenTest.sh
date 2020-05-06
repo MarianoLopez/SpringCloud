@@ -1,3 +1,3 @@
-#!bin/bash
+#!/bin/bash
 
 mvn surefire:test -f "$1"

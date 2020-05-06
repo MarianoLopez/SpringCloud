@@ -1,4 +1,4 @@
-#!bin/bash
+#!/bin/bash
 
 curl -v -u "${NEXUS_USER}:${NEXUS_PASSWORD}" \
 --upload-file "$1" \
