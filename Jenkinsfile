@@ -9,7 +9,7 @@ pipeline {
         }
 
       }
-     /* steps {
+      steps {
         sh 'cat /root/.m2/settings.xml'
         dir(path: 'jwt') {
           sh 'mvn clean install -DskipTests'
@@ -22,7 +22,7 @@ pipeline {
       }
     }
 
-    stage('Clean & Build Backend') {
+   /* stage('Clean & Build Backend') {
       options { skipDefaultCheckout() }
       agent {
         docker {
