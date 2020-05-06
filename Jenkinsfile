@@ -3,6 +3,8 @@ pipeline {
    parameters {
       booleanParam(name: 'INSTALL_LIBRARIES', defaultValue: false, description: 'Whether or not run mvn install for libraries')
       booleanParam(name: 'BUILD_INFRA', defaultValue: false, description: 'Whether or not build Eureka & Gateway services')
+      booleanParam(name: 'BUILD_BACKEND', defaultValue: true, description: 'Whether or not build microservices')
+      booleanParam(name: 'BUILD_FRONTEND', defaultValue: true, description: 'Whether or not build frontend')
    }
 
   stages {
@@ -60,6 +62,9 @@ pipeline {
     }
 
     stage('Build Backend microservices') {
+      when {
+        expression { params.BUILD_BACKEND }
+      }
       agent {
         docker {
           image 'maven:3.6.3-jdk-14'
@@ -79,6 +84,9 @@ pipeline {
     }
 
     stage('Backend Tests') {
+      when {
+        expression { params.BUILD_BACKEND }
+      }
       agent {
         docker {
           image 'maven:3.6.3-jdk-14'
@@ -99,6 +107,9 @@ pipeline {
     }
 
     stage('Frontend build') {
+      when {
+        expression { params.BUILD_FRONTEND }
+      }
       agent {
         docker {
           image 'node:13.12.0-alpine'
