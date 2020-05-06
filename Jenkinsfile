@@ -85,7 +85,8 @@ pipeline {
       }
       steps {
         dir(path: 'z-dash') {
-          sh '/jenkins_scripts/npmBuild.sh'
+          sh '''ls /jenkins_scripts
+/jenkins_scripts/npmBuild.sh'''
           stash(name: 'build-z-dash', includes: 'build/**')
         }
 
