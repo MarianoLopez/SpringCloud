@@ -10,9 +10,6 @@ pipeline {
         }
 
       }
-      steps {
-        sh 'cat /root/.m2/settings.xml'
-      }
 
       steps {
         dir(path: 'jwt') {
