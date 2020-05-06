@@ -2,7 +2,6 @@ pipeline {
   agent any
   stages {
     stage('Clean & Install Libraries') {
-      options { skipDefaultCheckout() }
       agent {
         docker {
           image 'maven:3.6.3-jdk-14'
@@ -10,7 +9,9 @@ pipeline {
         }
 
       }
-
+      options {
+        skipDefaultCheckout()
+      }
       steps {
         dir(path: 'jwt') {
           sh '/jenkins_scripts/mavenInstall.sh ./pom.xml'
@@ -23,8 +24,7 @@ pipeline {
       }
     }
 
-   stage('Clean & Build Backend') {
-      options { skipDefaultCheckout() }
+    stage('Clean & Build Backend') {
       agent {
         docker {
           image 'maven:3.6.3-jdk-14'
@@ -32,10 +32,13 @@ pipeline {
         }
 
       }
+      options {
+        skipDefaultCheckout()
+      }
       steps {
         dir(path: 'user-service') {
           sh '/jenkins_scripts/mavenBuild.sh ./pom.xml'
-          stash(name: 'build-user-service', includes: 'build/**')
+          stash(name: 'build-user-service', includes: 'target/**')
         }
 
         dir(path: 'eureka-service') {
@@ -50,7 +53,6 @@ pipeline {
     }
 
     stage('Backend Tests') {
-      options { skipDefaultCheckout() }
       agent {
         docker {
           image 'maven:3.6.3-jdk-14'
@@ -58,9 +60,12 @@ pipeline {
         }
 
       }
+      options {
+        skipDefaultCheckout()
+      }
       steps {
         dir(path: 'user-service') {
-        unstash 'build-user-service'
+          unstash 'build-user-service'
           sh '/jenkins_scripts/mavenTest.sh ./pom.xml'
         }
 
@@ -68,13 +73,15 @@ pipeline {
     }
 
     stage('Frontend build') {
-      options { skipDefaultCheckout() }
       agent {
         docker {
           image 'node:13.12.0-alpine'
           args '-v ${NPM_CACHE}:/root/.npm'
         }
 
+      }
+      options {
+        skipDefaultCheckout()
       }
       steps {
         dir(path: 'z-dash') {
@@ -86,7 +93,6 @@ pipeline {
     }
 
     stage('Deploy to Nexus') {
-      options { skipDefaultCheckout() }
       agent {
         docker {
           image 'maven:3.6.3-jdk-14'
@@ -98,6 +104,9 @@ pipeline {
                 --network=delivery_delivery'''
         }
 
+      }
+      options {
+        skipDefaultCheckout()
       }
       steps {
         dir(path: 'z-dash') {
