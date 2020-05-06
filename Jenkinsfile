@@ -1,5 +1,5 @@
 pipeline {
-  agent none
+  agent any
   stages {
     stage('Clean & Install Libraries') {
       agent {
@@ -9,7 +9,7 @@ pipeline {
         }
 
       }
-      steps {
+     /* steps {
         sh 'cat /root/.m2/settings.xml'
         dir(path: 'jwt') {
           sh 'mvn clean install -DskipTests'
@@ -48,6 +48,7 @@ pipeline {
     }
 
     stage('Backend Tests') {
+      options { skipDefaultCheckout() }
       agent {
         docker {
           image 'maven:3.6.3-jdk-14'
@@ -64,6 +65,7 @@ pipeline {
     }
 
     stage('Frontend build') {
+      options { skipDefaultCheckout() }
       agent {
         docker {
           image 'node:13.12.0-alpine'
@@ -83,6 +85,7 @@ npm run build'''
     }
 
     stage('Deploy to Nexus') {
+      options { skipDefaultCheckout() }
       agent {
         docker {
           image 'maven:3.6.3-jdk-14'
@@ -130,7 +133,7 @@ cat /root/.m2/settings.xml'''
         }
 
       }
-    }
+    }*/
 
     stage('Clean workspace') {
       steps {
