@@ -2,6 +2,7 @@ pipeline {
   agent any
   stages {
     stage('Clean & Install Libraries') {
+      options { skipDefaultCheckout() }
       agent {
         docker {
           image 'maven:3.6.3-jdk-14'
