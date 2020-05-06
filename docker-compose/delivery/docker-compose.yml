@@ -12,6 +12,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./jenkins_home:/var/jenkins_home
       - /home/jenkins:/home
+      - ./jenkins_scripts:/jenkins_scripts
     environment:
       NEXUS_HOST: nexus
       NEXUS_PORT: 8081

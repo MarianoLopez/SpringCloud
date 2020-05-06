@@ -12,12 +12,15 @@ pipeline {
       }
       steps {
         sh 'cat /root/.m2/settings.xml'
+      }
+
+      steps {
         dir(path: 'jwt') {
-          sh 'mvn clean install -DskipTests'
+          sh '/jenkins_scripts/mavenInstall.sh ./pom.xml'
         }
 
         dir(path: 'zcore-blocking') {
-          sh 'mvn clean install -DskipTests'
+          sh '/jenkins_scripts/mavenInstall.sh ./pom.xml'
         }
 
       }
@@ -34,15 +37,16 @@ pipeline {
       }
       steps {
         dir(path: 'user-service') {
-          sh 'mvn clean package -DskipTests'
+          sh '/jenkins_scripts/mavenBuild.sh ./pom.xml'
+          stash(name: 'build-user-service', includes: 'build/**')
         }
 
         dir(path: 'eureka-service') {
-          sh 'mvn clean package -DskipTests'
+          sh '/jenkins_scripts/mavenBuild.sh ./pom.xml'
         }
 
         dir(path: 'gateway-service') {
-          sh 'mvn clean package -DskipTests'
+          sh '/jenkins_scripts/mavenBuild.sh ./pom.xml'
         }
 
       }
@@ -59,7 +63,8 @@ pipeline {
       }
       steps {
         dir(path: 'user-service') {
-          sh 'mvn test'
+        unstash 'build-user-service'
+          sh '/jenkins_scripts/mavenTest.sh ./pom.xml'
         }
 
       }
@@ -76,9 +81,7 @@ pipeline {
       }
       steps {
         dir(path: 'z-dash') {
-          sh '''npm ci --silent
-
-npm run build'''
+          sh '/jenkins_scripts/npmBuild.sh'
           stash(name: 'build-z-dash', includes: 'build/**')
         }
 
@@ -102,26 +105,28 @@ npm run build'''
       steps {
         dir(path: 'z-dash') {
           unstash 'build-z-dash'
+          sh '/jenkins_scripts/compress.sh z-dash-0.0.1-SNAPSHOT ./build'
+          sh '/jenkins_scripts/nexusHttpDeploy.sh z-dash-0.0.1-SNAPSHOT.tar.gz npm-snapshots com.z.z-dash'
         }
 
         dir(path: 'jwt') {
-          sh 'mvn deploy -DskipTests -Dmaven.install.skip=true -Dnexus.port=$NEXUS_PORT -Dnexus.host=$NEXUS_HOST'
+          sh '/jenkins_scripts/mavenDeploy.sh ./pom.xml'
         }
 
         dir(path: 'zcore-blocking') {
-          sh 'mvn deploy -DskipTests -Dmaven.install.skip=true -Dnexus.port=$NEXUS_PORT -Dnexus.host=$NEXUS_HOST'
+          sh '/jenkins_scripts/mavenDeploy.sh ./pom.xml'
         }
 
         dir(path: 'user-service') {
-          sh 'mvn deploy -DskipTests -Dmaven.install.skip=true -Dnexus.port=$NEXUS_PORT -Dnexus.host=$NEXUS_HOST'
+          sh '/jenkins_scripts/mavenDeploy.sh ./pom.xml'
         }
 
         dir(path: 'eureka-service') {
-          sh 'mvn deploy -DskipTests -Dmaven.install.skip=true -Dnexus.port=$NEXUS_PORT -Dnexus.host=$NEXUS_HOST'
+          sh '/jenkins_scripts/mavenDeploy.sh ./pom.xml'
         }
 
         dir(path: 'gateway-service') {
-          sh 'mvn deploy -DskipTests -Dmaven.install.skip=true -Dnexus.port=$NEXUS_PORT -Dnexus.host=$NEXUS_HOST'
+          sh '/jenkins_scripts/mavenDeploy.sh ./pom.xml'
         }
 
       }
