@@ -22,7 +22,7 @@ pipeline {
       }
     }
 
-   /* stage('Clean & Build Backend') {
+   stage('Clean & Build Backend') {
       options { skipDefaultCheckout() }
       agent {
         docker {
@@ -101,15 +101,6 @@ npm run build'''
       steps {
         dir(path: 'z-dash') {
           unstash 'build-z-dash'
-          sh '''echo $NEXUS_USER
-echo $NEXUS_PASSWORD
-
-pwd
-ls -la
-
-ls -la /root/.m2/
-
-cat /root/.m2/settings.xml'''
         }
 
         dir(path: 'jwt') {
@@ -133,7 +124,7 @@ cat /root/.m2/settings.xml'''
         }
 
       }
-    }*/
+    }
 
     stage('Clean workspace') {
       steps {
