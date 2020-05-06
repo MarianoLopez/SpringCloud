@@ -1,7 +1,15 @@
 pipeline {
   agent any
+   parameters {
+      booleanParam(name: 'INSTALL_LIBRARIES', defaultValue: false, description: 'Whether or not run mvn install for libraries')
+      booleanParam(name: 'BUILD_INFRA', defaultValue: false, description: 'Whether or not build Eureka & Gateway services')
+   }
+
   stages {
     stage('Clean & Install Libraries') {
+      when {
+        expression { params.INSTALL_LIBRARIES }
+      }
       agent {
         docker {
           image 'maven:3.6.3-jdk-14'
@@ -24,7 +32,34 @@ pipeline {
       }
     }
 
-    stage('Clean & Build Backend') {
+    stage('Build Infrastructure services') {
+      when {
+          expression { params.BUILD_INFRA }
+        }
+      agent {
+        docker {
+          image 'maven:3.6.3-jdk-14'
+          args '-v ${M2_HOME}:/root/.m2'
+        }
+
+      }
+      options {
+        skipDefaultCheckout()
+      }
+      steps {
+
+        dir(path: 'eureka-service') {
+          sh '/jenkins_scripts/mavenBuild.sh ./pom.xml'
+        }
+
+        dir(path: 'gateway-service') {
+          sh '/jenkins_scripts/mavenBuild.sh ./pom.xml'
+        }
+
+      }
+    }
+
+    stage('Build Backend microservices') {
       agent {
         docker {
           image 'maven:3.6.3-jdk-14'
@@ -40,15 +75,6 @@ pipeline {
           sh '/jenkins_scripts/mavenBuild.sh ./pom.xml'
           stash(name: 'build-user-service', includes: 'target/**')
         }
-
-        dir(path: 'eureka-service') {
-          sh '/jenkins_scripts/mavenBuild.sh ./pom.xml'
-        }
-
-        dir(path: 'gateway-service') {
-          sh '/jenkins_scripts/mavenBuild.sh ./pom.xml'
-        }
-
       }
     }
 
@@ -86,7 +112,7 @@ pipeline {
       steps {
         dir(path: 'z-dash') {
           sh '''ls /jenkins_scripts
-/jenkins_scripts/npmBuild.sh'''
+/jenkins_scripts/reactBuild.sh'''
           stash(name: 'build-z-dash', includes: 'build/**')
         }
 
