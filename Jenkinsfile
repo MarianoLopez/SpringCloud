@@ -222,7 +222,7 @@ pipeline {
         }
 
 
-        stage('Deploy microservices to Nexus') {
+        stage('Deploy frontend to Nexus') {
           when {
               expression { params.BUILD_FRONTEND }
             }
