@@ -130,7 +130,10 @@ pipeline {
       }
     }
 
-    stage('Deploy to Nexus') {
+    stage('Deploy Libraries to Nexus') {
+    when {
+        expression { params.INSTALL_LIBRARIES }
+      }
       agent {
         docker {
           image 'maven:3.6.3-jdk-14'
@@ -147,11 +150,6 @@ pipeline {
         skipDefaultCheckout()
       }
       steps {
-        dir(path: 'z-dash') {
-          unstash 'build-z-dash'
-          sh '/jenkins_scripts/compress.sh z-dash-0.0.1-SNAPSHOT ./build'
-          sh '/jenkins_scripts/nexusHttpDeploy.sh z-dash-0.0.1-SNAPSHOT.tar.gz npm-snapshots com.z.z-dash'
-        }
 
         dir(path: 'jwt') {
           sh '/jenkins_scripts/mavenDeploy.sh ./pom.xml'
@@ -160,10 +158,29 @@ pipeline {
         dir(path: 'zcore-blocking') {
           sh '/jenkins_scripts/mavenDeploy.sh ./pom.xml'
         }
+      }
+    }
 
-        dir(path: 'user-service') {
-          sh '/jenkins_scripts/mavenDeploy.sh ./pom.xml'
+    stage('Deploy Infrastructure services to Nexus') {
+      when {
+          expression { params.BUILD_INFRA }
         }
+      agent {
+        docker {
+          image 'maven:3.6.3-jdk-14'
+          args '''-v ${M2_HOME}:/root/.m2
+                -e NEXUS_PASSWORD=${NEXUS_PASSWORD}
+                -e NEXUS_USER=${NEXUS_USER}
+                -e NEXUS_HOST=${NEXUS_HOST}
+                -e NEXUS_PORT=${NEXUS_PORT}
+                --network=delivery_delivery'''
+        }
+
+      }
+      options {
+        skipDefaultCheckout()
+      }
+      steps {
 
         dir(path: 'eureka-service') {
           sh '/jenkins_scripts/mavenDeploy.sh ./pom.xml'
@@ -175,6 +192,62 @@ pipeline {
 
       }
     }
+
+    stage('Deploy microservices to Nexus') {
+          when {
+              expression { params.BUILD_BACKEND }
+            }
+          agent {
+            docker {
+              image 'maven:3.6.3-jdk-14'
+              args '''-v ${M2_HOME}:/root/.m2
+                    -e NEXUS_PASSWORD=${NEXUS_PASSWORD}
+                    -e NEXUS_USER=${NEXUS_USER}
+                    -e NEXUS_HOST=${NEXUS_HOST}
+                    -e NEXUS_PORT=${NEXUS_PORT}
+                    --network=delivery_delivery'''
+            }
+
+          }
+          options {
+            skipDefaultCheckout()
+          }
+          steps {
+
+
+            dir(path: 'user-service') {
+              sh '/jenkins_scripts/mavenDeploy.sh ./pom.xml'
+            }
+          }
+        }
+
+
+        stage('Deploy microservices to Nexus') {
+          when {
+              expression { params.BUILD_FRONTEND }
+            }
+          agent {
+            docker {
+              image 'maven:3.6.3-jdk-14'
+              args '''-v ${M2_HOME}:/root/.m2
+                    -e NEXUS_PASSWORD=${NEXUS_PASSWORD}
+                    -e NEXUS_USER=${NEXUS_USER}
+                    -e NEXUS_HOST=${NEXUS_HOST}
+                    -e NEXUS_PORT=${NEXUS_PORT}
+                    --network=delivery_delivery'''
+            }
+
+          }
+          options {
+            skipDefaultCheckout()
+          }
+          steps {
+            dir(path: 'z-dash') {
+            unstash 'build-z-dash'
+              sh '/jenkins_scripts/npmPublish.sh npm-snapshots'
+            }
+          }
+        }
 
     stage('Clean workspace') {
       steps {
