@@ -1,7 +1,7 @@
 #!/bin/sh
 REGISTRY="http://${NEXUS_HOST}:${NEXUS_PORT}/repository/$1/"
 
-npm install npm-cli-login
+npm install npm-cli-login -g
 
 npm config set registry "${REGISTRY}"
 
