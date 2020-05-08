@@ -125,9 +125,6 @@ pipeline {
         }
 
       }
-      options {
-        skipDefaultCheckout()
-      }
       steps {
         dir(path: 'z-dash') {
           sh '''cat ./package.json
