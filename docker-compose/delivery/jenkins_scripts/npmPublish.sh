@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 REGISTRY="http://${NEXUS_HOST}:${NEXUS_PORT}/repository/$1/"
 
 npm config set registry "${REGISTRY}"

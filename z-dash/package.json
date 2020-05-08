@@ -1,6 +1,7 @@
 {
   "name": "z-dash",
   "version": "0.1.0",
+  "private": false,
   "dependencies": {
     "@material-ui/core": "latest",
     "@material-ui/icons": "latest",
