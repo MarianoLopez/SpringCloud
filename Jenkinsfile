@@ -130,7 +130,8 @@ pipeline {
       }
       steps {
         dir(path: 'z-dash') {
-          sh '/jenkins_scripts/reactBuild.sh'
+          sh '''cat ./package.json
+/jenkins_scripts/reactBuild.sh'''
           stash(name: 'build-z-dash', includes: 'build/**')
         }
 
