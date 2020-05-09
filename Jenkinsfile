@@ -267,8 +267,8 @@ cat ./package.json
 
   }
   environment {
-    M2_HOME = '/home/.m2'
-    NPM_CACHE = '/home/.npm'
+    M2_HOME = '/home/jenkins/.m2'
+    NPM_CACHE = '/home/jenkins/.npm'
     NEXUS_DOCKER_PORT = 8082
   }
   parameters {
