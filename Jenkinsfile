@@ -206,6 +206,18 @@ pipeline {
     }
 
     stage('Deploy microservices to Nexus') {
+     agent {
+            docker {
+              image 'maven:3.6.3-jdk-14'
+              args '''-v ${M2_HOME}:/root/.m2
+                    -e NEXUS_PASSWORD=${NEXUS_PASSWORD}
+                    -e NEXUS_USER=${NEXUS_USER}
+                    -e NEXUS_HOST=${NEXUS_HOST}
+                    -e NEXUS_PORT=${NEXUS_PORT}
+                    --network=delivery_delivery'''
+            }
+
+          }
       when {
         expression {
           params.BUILD_BACKEND
@@ -267,6 +279,7 @@ cat ./package.json
 
   }
   environment {
+    /* This path is from the host (not the jenkins container) */
     M2_HOME = '/home/jenkins/.m2'
     NPM_CACHE = '/home/jenkins/.npm'
     NEXUS_DOCKER_PORT = 8082
