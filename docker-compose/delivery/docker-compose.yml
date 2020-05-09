@@ -25,6 +25,7 @@ services:
       - ./nexus-data:/nexus-data
     ports:
       - 8081:8081
+      - 8082:8082
     networks:
       - delivery
 networks:
