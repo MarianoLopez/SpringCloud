@@ -204,18 +204,6 @@ pipeline {
     }
 
     stage('Deploy microservices to Nexus') {
-      agent {
-        docker {
-          image 'maven:3.6.3-jdk-14'
-          args '''-v ${M2_HOME}:/root/.m2
-                    -e NEXUS_PASSWORD=${NEXUS_PASSWORD}
-                    -e NEXUS_USER=${NEXUS_USER}
-                    -e NEXUS_HOST=${NEXUS_HOST}
-                    -e NEXUS_PORT=${NEXUS_PORT}
-                    --network=delivery_delivery'''
-        }
-
-      }
       when {
         expression {
           params.BUILD_BACKEND
@@ -227,7 +215,10 @@ pipeline {
       }
       steps {
         dir(path: 'user-service') {
-          sh '/jenkins_scripts/mavenDeploy.sh ./pom.xml'
+          unstash 'build-user-service'
+          sh '/jenkins_scripts/dockerBuild.sh user-service'
+          sh '/jenkins_scripts/dockerNexusLogin.sh'
+          sh '/jenkins_scripts/dockerPush.sh'
         }
 
       }
@@ -276,6 +267,7 @@ cat ./package.json
   environment {
     M2_HOME = '/root/jenkins/.m2'
     NPM_CACHE = '/root/jenkins/.npm'
+    NEXUS_DOCKER_PORT = 8082
   }
   parameters {
     booleanParam(name: 'INSTALL_LIBRARIES', defaultValue: false, description: 'Whether or not run mvn install for libraries')

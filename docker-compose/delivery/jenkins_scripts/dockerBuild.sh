@@ -1,0 +1,5 @@
+#!/bin/bash
+
+DOCKER_IMAGE_TAG=${2:-SNAPSHOT}
+
+docker build -t "$NEXUS_HOST:$NEXUS_DOCKER_PORT/$1:$DOCKER_IMAGE_TAG" .
