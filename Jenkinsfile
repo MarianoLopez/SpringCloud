@@ -20,6 +20,8 @@ pipeline {
       }
       steps {
         dir(path: 'jwt') {
+          sh 'ls /root/.m2/'
+          sh 'cat /root/.m2/settings.xml'
           sh '/jenkins_scripts/mavenInstall.sh ./pom.xml'
         }
 
