@@ -5,7 +5,7 @@ pipeline {
       agent {
         docker {
           image 'maven:3.6.3-jdk-14'
-           args '''-v ${M2_HOME}:/root/.m2
+          args '''-v ${M2_HOME}:/root/.m2
                   -e NEXUS_PASSWORD=${NEXUS_PASSWORD}
                   -e NEXUS_USER=${NEXUS_USER}
                   -e NEXUS_HOST=${NEXUS_HOST}
@@ -60,7 +60,7 @@ pipeline {
 
         dir(path: 'gateway-service') {
           sh '/jenkins_scripts/mavenBuild.sh ./pom.xml'
-          stash(name: 'build-eureka-service', includes: 'target/**')
+          stash(name: 'build-gateway-service', includes: 'target/**')
         }
 
       }
@@ -211,7 +211,6 @@ pipeline {
 
   }
   environment {
-    /* This path is from the host (not the jenkins container) */
     M2_HOME = '/home/jenkins/.m2'
     NPM_CACHE = '/home/jenkins/.npm'
     NEXUS_URL = 'localhost'
