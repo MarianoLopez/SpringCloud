@@ -122,7 +122,7 @@ pipeline {
       agent {
         docker {
           image 'node:13.12.0-alpine'
-          args '-v ${NPM_CACHE}:/root/.npm'
+          args '-v ${NPM_CACHE}:/root/.npm -e GATEWAY_URL=${params.GATEWAY_URL}'
         }
 
       }
@@ -221,5 +221,6 @@ pipeline {
     booleanParam(name: 'BUILD_INFRA', defaultValue: false, description: 'Whether or not build Eureka & Gateway services')
     booleanParam(name: 'BUILD_BACKEND', defaultValue: true, description: 'Whether or not build microservices')
     booleanParam(name: 'BUILD_FRONTEND', defaultValue: true, description: 'Whether or not build frontend')
+    string(name: 'GATEWAY_URL', defaultValue: 'http://localhost:9000', description: 'Gateway service URL to be use by the frontend')
   }
 }
