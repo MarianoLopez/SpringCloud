@@ -122,7 +122,7 @@ pipeline {
       agent {
         docker {
           image 'node:13.12.0-alpine'
-          args '-v ${NPM_CACHE}:/root/.npm -e GATEWAY_URL=${params.GATEWAY_URL}'
+          args '-v ${NPM_CACHE}:/root/.npm -e GATEWAY_URL=${GATEWAY_URL}'
         }
 
       }
@@ -215,6 +215,7 @@ pipeline {
     NPM_CACHE = '/home/jenkins/.npm'
     NEXUS_URL = 'localhost'
     NEXUS_DOCKER_PORT = 8082
+    GATEWAY_URL="$params.GATEWAY_URL"
   }
   parameters {
     booleanParam(name: 'INSTALL_LIBRARIES', defaultValue: false, description: 'Whether or not run mvn install for libraries')
