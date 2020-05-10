@@ -1,4 +1,5 @@
 FROM openjdk:14-jdk-slim
-ARG JVM_OPTS
+ENV JVM_ARGS ''
+ENV SPRING_ARGS ''
 ADD target/*.jar gateway-service.jar
-ENTRYPOINT java $JVM_OPTS -jar gateway-service.jar
+ENTRYPOINT java $JVM_ARGS -jar gateway-service.jar $JVM_ARGS

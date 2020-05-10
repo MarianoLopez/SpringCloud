@@ -1,11 +1,16 @@
 pipeline {
   agent any
   stages {
-    stage('Clean & Install Libraries') {
+    stage('Install Libraries') {
       agent {
         docker {
           image 'maven:3.6.3-jdk-14'
-          args '-v ${M2_HOME}:/root/.m2'
+           args '''-v ${M2_HOME}:/root/.m2
+                  -e NEXUS_PASSWORD=${NEXUS_PASSWORD}
+                  -e NEXUS_USER=${NEXUS_USER}
+                  -e NEXUS_HOST=${NEXUS_HOST}
+                  -e NEXUS_PORT=${NEXUS_PORT}
+                  --network=delivery_delivery'''
         }
 
       }
@@ -20,13 +25,11 @@ pipeline {
       }
       steps {
         dir(path: 'jwt') {
-          sh 'ls /root/.m2/'
-          sh 'cat /root/.m2/settings.xml'
-          sh '/jenkins_scripts/mavenInstall.sh ./pom.xml'
+          sh '/jenkins_scripts/mavenDeploy.sh ./pom.xml'
         }
 
         dir(path: 'zcore-blocking') {
-          sh '/jenkins_scripts/mavenInstall.sh ./pom.xml'
+          sh '/jenkins_scripts/mavenDeploy.sh ./pom.xml'
         }
 
       }
@@ -52,10 +55,12 @@ pipeline {
       steps {
         dir(path: 'eureka-service') {
           sh '/jenkins_scripts/mavenBuild.sh ./pom.xml'
+          stash(name: 'build-eureka-service', includes: 'target/**')
         }
 
         dir(path: 'gateway-service') {
           sh '/jenkins_scripts/mavenBuild.sh ./pom.xml'
+          stash(name: 'build-eureka-service', includes: 'target/**')
         }
 
       }
@@ -129,61 +134,14 @@ pipeline {
       }
       steps {
         dir(path: 'z-dash') {
-          sh '''cat ./package.json
-/jenkins_scripts/reactBuild.sh'''
+          sh '/jenkins_scripts/npmBuild.sh'
           stash(name: 'build-z-dash', includes: 'build/**')
         }
 
       }
     }
 
-    stage('Deploy Libraries to Nexus') {
-      agent {
-        docker {
-          image 'maven:3.6.3-jdk-14'
-          args '''-v ${M2_HOME}:/root/.m2
-                -e NEXUS_PASSWORD=${NEXUS_PASSWORD}
-                -e NEXUS_USER=${NEXUS_USER}
-                -e NEXUS_HOST=${NEXUS_HOST}
-                -e NEXUS_PORT=${NEXUS_PORT}
-                --network=delivery_delivery'''
-        }
-
-      }
-      when {
-        expression {
-          params.INSTALL_LIBRARIES
-        }
-
-      }
-      options {
-        skipDefaultCheckout()
-      }
-      steps {
-        dir(path: 'jwt') {
-          sh '/jenkins_scripts/mavenDeploy.sh ./pom.xml'
-        }
-
-        dir(path: 'zcore-blocking') {
-          sh '/jenkins_scripts/mavenDeploy.sh ./pom.xml'
-        }
-
-      }
-    }
-
     stage('Deploy Infrastructure services to Nexus') {
-      agent {
-        docker {
-          image 'maven:3.6.3-jdk-14'
-          args '''-v ${M2_HOME}:/root/.m2
-                -e NEXUS_PASSWORD=${NEXUS_PASSWORD}
-                -e NEXUS_USER=${NEXUS_USER}
-                -e NEXUS_HOST=${NEXUS_HOST}
-                -e NEXUS_PORT=${NEXUS_PORT}
-                --network=delivery_delivery'''
-        }
-
-      }
       when {
         expression {
           params.BUILD_INFRA
@@ -195,11 +153,13 @@ pipeline {
       }
       steps {
         dir(path: 'eureka-service') {
-          sh '/jenkins_scripts/mavenDeploy.sh ./pom.xml'
+          unstash 'build-eureka-service'
+          sh '/jenkins_scripts/dockerBuildAndPublish.sh eureka-service'
         }
 
         dir(path: 'gateway-service') {
-          sh '/jenkins_scripts/mavenDeploy.sh ./pom.xml'
+          unstash 'build-gateway-service'
+          sh '/jenkins_scripts/dockerBuildAndPublish.sh gateway-service'
         }
 
       }
@@ -218,27 +178,13 @@ pipeline {
       steps {
         dir(path: 'user-service') {
           unstash 'build-user-service'
-          sh '/jenkins_scripts/dockerBuild.sh "$NEXUS_URL:$NEXUS_DOCKER_PORT/user-service"'
-          sh '/jenkins_scripts/dockerNexusLogin.sh "$NEXUS_URL:$NEXUS_DOCKER_PORT"'
-          sh '/jenkins_scripts/dockerPush.sh "$NEXUS_URL:$NEXUS_DOCKER_PORT/user-service"'
+          sh '/jenkins_scripts/dockerBuildAndPublish.sh user-service'
         }
 
       }
     }
 
     stage('Deploy frontend to Nexus') {
-      agent {
-        docker {
-          image 'node:13.12.0-alpine'
-          args '''-v ${NPM_CACHE}:/root/.npm
--e NEXUS_PASSWORD=${NEXUS_PASSWORD}
--e NEXUS_USER=${NEXUS_USER}
--e NEXUS_HOST=${NEXUS_HOST}
--e NEXUS_PORT=${NEXUS_PORT}
---network=delivery_delivery'''
-        }
-
-      }
       when {
         expression {
           params.BUILD_FRONTEND
@@ -251,9 +197,7 @@ pipeline {
       steps {
         dir(path: 'z-dash') {
           unstash 'build-z-dash'
-          sh '''ls
-cat ./package.json
-/jenkins_scripts/npmPublish.sh npm-snapshots'''
+          sh '/jenkins_scripts/dockerBuildAndPublish.sh z-dash'
         }
 
       }
