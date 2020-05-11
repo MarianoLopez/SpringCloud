@@ -10,10 +10,9 @@ pipeline {
 
       }
       steps {
-        sh 'ls'
+        checkout scm
         dir(path: 'user-service') {
-          sh '''ls
-/jenkins_scripts/mavenBuild.sh ./pom.xml'''
+          sh '/jenkins_scripts/mavenBuild.sh ./pom.xml'
           stash(name: 'build-user-service', includes: 'target/**')
         }
 
@@ -40,7 +39,7 @@ pipeline {
       }
        post {
           always {
-              junit '**/target/*.xml'
+              junit '**/target/surefire-reports/*.xml'
           }
       }
     }
