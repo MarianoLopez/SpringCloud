@@ -9,9 +9,6 @@ pipeline {
         }
 
       }
-      options {
-        skipDefaultCheckout()
-      }
       steps {
         sh 'ls'
         dir(path: 'user-service') {
@@ -40,6 +37,11 @@ pipeline {
           sh '/jenkins_scripts/mavenTest.sh ./pom.xml'
         }
 
+      }
+       post {
+          always {
+              junit '**/target/*.xml'
+          }
       }
     }
 
