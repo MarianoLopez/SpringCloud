@@ -1,9 +1,5 @@
-def serviceName = "user-service"
 pipeline {
   agent any
-  options {
-      skipDefaultCheckout()
-    }
   stages {
     stage('Build') {
       agent {
@@ -11,6 +7,7 @@ pipeline {
           image 'maven:3.6.3-jdk-14'
           args '-v ${M2_HOME}:/root/.m2'
         }
+
       }
       steps {
         checkout scm
@@ -28,20 +25,23 @@ pipeline {
           image 'maven:3.6.3-jdk-14'
           args '-v ${M2_HOME}:/root/.m2'
         }
+
       }
       options {
         skipDefaultCheckout()
+      }
+      post {
+        always {
+          junit '**/target/surefire-reports/*.xml'
+        }
+
       }
       steps {
         dir(path: "${serviceName}") {
           unstash "build-${serviceName}"
           sh '/jenkins_scripts/mavenTest.sh ./pom.xml'
         }
-      }
-       post {
-          always {
-              junit '**/target/surefire-reports/*.xml'
-          }
+
       }
     }
 
@@ -51,9 +51,12 @@ pipeline {
       }
       steps {
         dir(path: "${serviceName}") {
+          sh '''ls
+cat ./Dockerfile'''
           unstash "build-${serviceName}"
           sh "/jenkins_scripts/dockerBuildAndPublish.sh $serviceName"
         }
+
       }
     }
 
@@ -68,5 +71,8 @@ pipeline {
     M2_HOME = '/home/jenkins/.m2'
     NEXUS_URL = 'localhost'
     NEXUS_DOCKER_PORT = 8082
+  }
+  options {
+    skipDefaultCheckout()
   }
 }
