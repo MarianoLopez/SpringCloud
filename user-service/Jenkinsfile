@@ -52,7 +52,7 @@ pipeline {
       steps {
         dir(path: "${serviceName}") {
           unstash "build-${serviceName}"
-          sh '/jenkins_scripts/dockerBuildAndPublish.sh "${serviceName}"'
+          sh "/jenkins_scripts/dockerBuildAndPublish.sh $serviceName"
         }
       }
     }
