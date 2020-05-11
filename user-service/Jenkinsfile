@@ -1,3 +1,4 @@
+def serviceName = "user-service"
 pipeline {
   agent any
   options {
@@ -8,16 +9,14 @@ pipeline {
       agent {
         docker {
           image 'maven:3.6.3-jdk-14'
-          args '-v ${M2_HOME}:/root/.m2 -v /var/run/docker.sock:/var/run/docker.sock'
+          args '-v ${M2_HOME}:/root/.m2'
         }
-
       }
       steps {
         checkout scm
-        sh 'docker -v'
-        dir(path: 'user-service') {
+        dir(path: '${serviceName}') {
           sh '/jenkins_scripts/mavenBuild.sh ./pom.xml'
-          stash(name: 'build-user-service', includes: 'target/**')
+          stash(name: 'build-${serviceName}', includes: 'target/**')
         }
 
       }
@@ -29,17 +28,15 @@ pipeline {
           image 'maven:3.6.3-jdk-14'
           args '-v ${M2_HOME}:/root/.m2'
         }
-
       }
       options {
         skipDefaultCheckout()
       }
       steps {
-        dir(path: 'user-service') {
-          unstash 'build-user-service'
+        dir(path: '${serviceName}') {
+          unstash 'build-${serviceName}'
           sh '/jenkins_scripts/mavenTest.sh ./pom.xml'
         }
-
       }
        post {
           always {
@@ -53,11 +50,10 @@ pipeline {
         skipDefaultCheckout()
       }
       steps {
-        dir(path: 'user-service') {
-          unstash 'build-user-service'
-          sh '/jenkins_scripts/dockerBuildAndPublish.sh user-service'
+        dir(path: '${serviceName}') {
+          unstash 'build-${serviceName}'
+          sh '/jenkins_scripts/dockerBuildAndPublish.sh ${serviceName}'
         }
-
       }
     }
 
