@@ -13,11 +13,8 @@ pipeline {
         skipDefaultCheckout()
       }
       steps {
-        dir(path: 'user-service') {
-          sh '/jenkins_scripts/mavenBuild.sh ./pom.xml'
-          stash(name: 'build-user-service', includes: 'target/**')
-        }
-
+        sh '/jenkins_scripts/mavenBuild.sh ./pom.xml'
+        stash(name: 'build-user-service', includes: 'target/**')
       }
     }
 
