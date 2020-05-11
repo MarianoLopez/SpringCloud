@@ -14,9 +14,9 @@ pipeline {
       }
       steps {
         checkout scm
-        dir(path: '${serviceName}') {
+        dir(path: "${serviceName}") {
           sh '/jenkins_scripts/mavenBuild.sh ./pom.xml'
-          stash(name: 'build-${serviceName}', includes: 'target/**')
+          stash(name: "build-${serviceName}", includes: 'target/**')
         }
 
       }
@@ -33,8 +33,8 @@ pipeline {
         skipDefaultCheckout()
       }
       steps {
-        dir(path: '${serviceName}') {
-          unstash 'build-${serviceName}'
+        dir(path: "${serviceName}") {
+          unstash "build-${serviceName}"
           sh '/jenkins_scripts/mavenTest.sh ./pom.xml'
         }
       }
@@ -50,9 +50,9 @@ pipeline {
         skipDefaultCheckout()
       }
       steps {
-        dir(path: '${serviceName}') {
-          unstash 'build-${serviceName}'
-          sh '/jenkins_scripts/dockerBuildAndPublish.sh ${serviceName}'
+        dir(path: "${serviceName}") {
+          unstash "build-${serviceName}"
+          sh '/jenkins_scripts/dockerBuildAndPublish.sh "${serviceName}"'
         }
       }
     }
