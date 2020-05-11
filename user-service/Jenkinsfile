@@ -1,9 +1,6 @@
 def serviceName = "user-service"
 pipeline {
   agent any
-  options {
-      skipDefaultCheckout()
-    }
   stages {
     stage('Build') {
       agent {
