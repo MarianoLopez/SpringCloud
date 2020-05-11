@@ -9,12 +9,6 @@ pipeline {
         }
 
       }
-      when {
-        expression {
-          params.BUILD_BACKEND
-        }
-
-      }
       options {
         skipDefaultCheckout()
       }
@@ -35,12 +29,6 @@ pipeline {
         }
 
       }
-      when {
-        expression {
-          params.BUILD_BACKEND
-        }
-
-      }
       options {
         skipDefaultCheckout()
       }
@@ -54,12 +42,6 @@ pipeline {
     }
 
     stage('Deploy docker image') {
-      when {
-        expression {
-          params.BUILD_BACKEND
-        }
-
-      }
       options {
         skipDefaultCheckout()
       }
