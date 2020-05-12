@@ -5,6 +5,7 @@
       NPM_CACHE = '/home/jenkins/.npm'
       NEXUS_URL = 'localhost'
       NEXUS_DOCKER_PORT = 8082
+      GATEWAY_URL="$params.GATEWAY_URL"
    }
   stages {
    stage('Build') {
@@ -45,4 +46,7 @@
     }
 
   }
+   parameters {
+      string(name: 'GATEWAY_URL', defaultValue: 'http://localhost:9000', description: 'Gateway service URL to be use by the frontend')
+    }
 }
