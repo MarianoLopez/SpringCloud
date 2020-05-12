@@ -20,9 +20,6 @@ pipeline {
                 }
 
             }
-            options {
-                skipDefaultCheckout()
-            }
             steps {
                 dir(path: 'jwt') {
                     sh '/jenkins_scripts/mavenDeploy.sh ./pom.xml'
@@ -48,9 +45,6 @@ pipeline {
                     params.BUILD_INFRA
                 }
 
-            }
-            options {
-                skipDefaultCheckout()
             }
             steps {
                 dir(path: 'eureka-service') {
@@ -79,9 +73,6 @@ pipeline {
                     params.BUILD_BACKEND
                 }
 
-            }
-            options {
-                skipDefaultCheckout()
             }
             steps {
                 dir(path: 'user-service') {
