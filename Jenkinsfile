@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('Build backend') {
       steps {
-         build job: 'User-service', propagate: true, wait: true
+        build(job: 'User-service/feature/jenkins-blueocean', propagate: true, wait: true)
       }
     }
 
@@ -13,7 +13,7 @@ pipeline {
     NPM_CACHE = '/home/jenkins/.npm'
     NEXUS_URL = 'localhost'
     NEXUS_DOCKER_PORT = 8082
-    GATEWAY_URL="$params.GATEWAY_URL"
+    GATEWAY_URL = "$params.GATEWAY_URL"
   }
   parameters {
     booleanParam(name: 'INSTALL_LIBRARIES', defaultValue: false, description: 'Whether or not run mvn install for libraries')
