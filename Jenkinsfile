@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('Build backend') {
       steps {
-        build(job: "../User-service/${env.BRANCH_NAME}", propagate: true, wait: true)
+        build(job: "../User-service", propagate: true, wait: true)
       }
     }
 
