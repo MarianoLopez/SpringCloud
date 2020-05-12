@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('Build backend') {
       steps {
-        build 'user-service/'
+        build '../../User-service'
       }
     }
 
