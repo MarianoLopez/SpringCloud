@@ -14,8 +14,11 @@ import com.z.userservice.utils.UserTestUtils.buildUserResponse
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 import org.mockito.Mockito.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
@@ -28,19 +31,30 @@ import javax.validation.Validation
 
 
 @DisplayName("UserService unit tests")
+@TestInstance(PER_CLASS)
 class UserServiceTest {
 
-    private val mockUserDao = mock(UserDao::class.java)
-    private val mockUserTransformer = mock(UserTransformer::class.java)
-    private val mockAddUserTransformer = mock(AddUserRequestTransformer::class.java)
-    private val mockUserDetailsTransformer = mock(UserDetailsTransformer::class.java)
-    private val mockPasswordEncoder = mock(PasswordEncoder::class.java)
     private val validator = Validation.buildDefaultValidatorFactory().validator //static =(
+    private lateinit var mockUserDao: UserDao
+    private lateinit var mockUserTransformer: UserTransformer
+    private lateinit var mockAddUserTransformer: AddUserRequestTransformer
+    private lateinit var mockUserDetailsTransformer: UserDetailsTransformer
+    private lateinit var  mockPasswordEncoder: PasswordEncoder
+    private lateinit var userService: UserService
 
-    private val userService = UserService(
-        userDao = mockUserDao, userDetailsTransformer = mockUserDetailsTransformer,
-        userTransformer = mockUserTransformer, addUserRequestTransformer = mockAddUserTransformer,
-        passwordEncoder = mockPasswordEncoder, validator = validator)
+    @BeforeEach
+    fun setup() {
+        mockUserDao = mock(UserDao::class.java)
+        mockUserTransformer = mock(UserTransformer::class.java)
+        mockAddUserTransformer = mock(AddUserRequestTransformer::class.java)
+        mockUserDetailsTransformer = mock(UserDetailsTransformer::class.java)
+        mockPasswordEncoder = mock(PasswordEncoder::class.java)
+
+        userService = UserService(
+                userDao = mockUserDao, userDetailsTransformer = mockUserDetailsTransformer,
+                userTransformer = mockUserTransformer, addUserRequestTransformer = mockAddUserTransformer,
+                passwordEncoder = mockPasswordEncoder, validator = validator)
+    }
 
     @Test
     fun `loadUserByUsername(username) with existent username should return UserDetails`() {
@@ -151,7 +165,7 @@ class UserServiceTest {
         verifyNoInteractions(mockUserDetailsTransformer, mockAddUserTransformer, mockPasswordEncoder, mockUserDao, mockUserTransformer)
         val violationFieldNames = exception.constraintViolations.map { it.propertyPath.toString() }
         assertThat(violationFieldNames, hasSize(3))
-        assertThat(violationFieldNames, containsInAnyOrder("name", "password", "email"))
+        assertThat(violationFieldNames, containsInAnyOrder("username", "password", "email"))
     }
 
     @Test

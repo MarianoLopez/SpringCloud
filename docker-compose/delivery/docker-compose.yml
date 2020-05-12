@@ -1,0 +1,32 @@
+version: '3'
+services:
+  jenkins:
+    image: jenkinsci/blueocean
+    user: root
+    ports:
+      - 8080:8080
+      - 50000:50000
+    networks:
+      - delivery
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./jenkins_home:/var/jenkins_home
+      - /home/jenkins:/home
+      - ./jenkins_scripts:/jenkins_scripts
+    environment:
+      NEXUS_HOST: nexus
+      NEXUS_PORT: 8081
+      NEXUS_USER: ${NEXUS_USER}
+      NEXUS_PASSWORD: ${NEXUS_PASSWORD}
+  nexus:
+    image: sonatype/nexus3
+    container_name: nexus
+    volumes:
+      - ./nexus-data:/nexus-data
+    ports:
+      - 8081:8081
+      - 8082:8082
+    networks:
+      - delivery
+networks:
+  delivery:

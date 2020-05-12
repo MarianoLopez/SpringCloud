@@ -1,0 +1,53 @@
+pipeline {
+  agent any
+  stages {
+    stage('Build') {
+      agent {
+        docker {
+          image 'node:13.12.0-alpine'
+          args '-v ${NPM_CACHE}:/root/.npm -e GATEWAY_URL=${GATEWAY_URL}'
+        }
+
+      }
+      steps {
+        checkout scm
+        dir(path: "${SERVICE_NAME}") {
+          sh '/jenkins_scripts/npmBuild.sh'
+          stash(name: "build-${SERVICE_NAME}", includes: 'build/**')
+        }
+
+      }
+    }
+
+    stage('Deploy docker image') {
+      options {
+        skipDefaultCheckout()
+      }
+      steps {
+        dir(path: "${SERVICE_NAME}") {
+          unstash "build-${SERVICE_NAME}"
+          sh "/jenkins_scripts/dockerBuildAndPublish.sh $SERVICE_NAME"
+        }
+
+      }
+    }
+
+    stage('Clean workspace') {
+      steps {
+        sh '/jenkins_scripts/dockerPrune.sh'
+        cleanWs()
+      }
+    }
+
+  }
+  environment {
+    SERVICE_NAME = 'z-dash'
+    NPM_CACHE = '/home/jenkins/.npm'
+    NEXUS_URL = 'localhost'
+    NEXUS_DOCKER_PORT = 8082
+    GATEWAY_URL = "$params.GATEWAY_URL"
+  }
+  parameters {
+    string(name: 'GATEWAY_URL', defaultValue: 'http://localhost:9000', description: 'Gateway service URL to be use by the frontend')
+  }
+}
