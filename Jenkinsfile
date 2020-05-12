@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('Build backend') {
       steps {
-        build(job: 'User-service', wait: true)
+        build(job: 'User-service/feature/jenkins-blueocean', wait: true)
       }
     }
 
