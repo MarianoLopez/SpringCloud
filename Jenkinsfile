@@ -200,6 +200,7 @@ pipeline {
 
         stage('Clean workspace') {
             steps {
+                sh "/jenkins_scripts/dockerPrune.sh"
                 cleanWs()
             }
         }
