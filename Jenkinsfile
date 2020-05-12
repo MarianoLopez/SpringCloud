@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('Build backend') {
       steps {
-        build(job: 'user-service', wait: true)
+        build(job: 'eureka-service', wait: true)
       }
     }
 
