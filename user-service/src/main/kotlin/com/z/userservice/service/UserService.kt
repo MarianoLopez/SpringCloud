@@ -2,6 +2,9 @@ package com.z.userservice.service
 
 import com.z.userservice.dao.UserDao
 import com.z.userservice.domain.User
+import com.z.userservice.domain.event.UserEvent
+import com.z.userservice.domain.event.UserEventType
+import com.z.userservice.domain.event.UserEventType.SAVE
 import com.z.userservice.dto.AddUserRequest
 import com.z.userservice.dto.DeleteUserRequest
 import com.z.userservice.dto.UpdateUserRequest
@@ -9,6 +12,7 @@ import com.z.userservice.dto.UserResponse
 import com.z.userservice.transformer.AddUserRequestTransformer
 import com.z.userservice.transformer.UserDetailsTransformer
 import com.z.userservice.transformer.UserTransformer
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.security.core.userdetails.UserDetails
@@ -28,6 +32,7 @@ class UserService(private val userDao: UserDao,
 				  private val userDetailsTransformer: UserDetailsTransformer,
 				  private val userTransformer: UserTransformer,
 				  private val passwordEncoder: PasswordEncoder,
+				  private val applicationEventPublisher: ApplicationEventPublisher,
 				  private val validator: Validator): UserDetailsService {
 
     override fun loadUserByUsername(username:String): UserDetails {
@@ -55,7 +60,10 @@ class UserService(private val userDao: UserDao,
 		val user = this.addUserRequestTransformer.transform(addUserRequest).apply {
 			this@UserService.encodeUserPasswordIfNotBlank(this)
 		}
-		return saveOrUpdate(user)
+
+		return saveOrUpdate(user).apply {
+			applicationEventPublisher.publishEvent(UserEvent(type = SAVE, data = this))
+		}
 	}
 
 	@Transactional

@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 import org.mockito.Mockito.*
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
@@ -40,6 +41,7 @@ class UserServiceTest {
     private lateinit var mockAddUserTransformer: AddUserRequestTransformer
     private lateinit var mockUserDetailsTransformer: UserDetailsTransformer
     private lateinit var  mockPasswordEncoder: PasswordEncoder
+    private lateinit var mockApplicationEventPublisher: ApplicationEventPublisher
     private lateinit var userService: UserService
 
     @BeforeEach
@@ -48,12 +50,13 @@ class UserServiceTest {
         mockUserTransformer = mock(UserTransformer::class.java)
         mockAddUserTransformer = mock(AddUserRequestTransformer::class.java)
         mockUserDetailsTransformer = mock(UserDetailsTransformer::class.java)
+        mockApplicationEventPublisher = mock(ApplicationEventPublisher::class.java)
         mockPasswordEncoder = mock(PasswordEncoder::class.java)
 
         userService = UserService(
                 userDao = mockUserDao, userDetailsTransformer = mockUserDetailsTransformer,
                 userTransformer = mockUserTransformer, addUserRequestTransformer = mockAddUserTransformer,
-                passwordEncoder = mockPasswordEncoder, validator = validator)
+                passwordEncoder = mockPasswordEncoder, validator = validator, applicationEventPublisher = mockApplicationEventPublisher)
     }
 
     @Test
