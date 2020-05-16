@@ -1,7 +1,7 @@
 package com.z.userservice.configuration
 
 import com.z.userservice.utils.ResourceConstant.USER_RESOURCE
-import com.z.zcoreblocking.domain.property.RequestAuthProperties
+import com.z.zcoreblocking.dto.property.RequestAuthProperties
 import com.z.zcoreblocking.security.filter.AuthTokenFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

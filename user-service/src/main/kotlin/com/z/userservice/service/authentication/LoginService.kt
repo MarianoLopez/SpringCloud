@@ -1,8 +1,7 @@
-package com.z.userservice.service
+package com.z.userservice.service.authentication
 
 import com.z.jwt.dto.TokenResponse
 import com.z.jwt.service.JwtSpringService
-import com.z.userservice.service.authentication.UserAuthenticationManager
 import com.z.userservice.dto.LoginRequest
 import org.springframework.stereotype.Service
 

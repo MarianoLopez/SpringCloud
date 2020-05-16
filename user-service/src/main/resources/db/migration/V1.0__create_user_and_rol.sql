@@ -1,15 +1,18 @@
 create sequence user_sequence start with 1 increment by 1;
 
 create table user (
-    id bigint not null primary key,
-    name varchar(255) not null unique,
+    id bigint not null,
+    name varchar(255) not null,
     password varchar(255) not null,
-    email varchar(320) not null unique,
+    email varchar(320) not null,
     state bit not null,
     created_by varchar(255) not null,
     created_date datetime(6) not null,
     modified_by varchar(255) not null,
-    last_modified_date datetime(6) not null
+    last_modified_date datetime(6) not null,
+    constraint PK_USER primary key (id),
+    constraint UQ_USER_NAME unique (name),
+    constraint UQ_USER_EMAIL unique (email)
 );
 
 create table user_roles (

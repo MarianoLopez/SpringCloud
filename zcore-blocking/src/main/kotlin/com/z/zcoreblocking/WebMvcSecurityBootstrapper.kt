@@ -8,11 +8,12 @@ import com.z.jwt.property.JwtProperties
 import com.z.jwt.service.JwtService
 import com.z.jwt.service.JwtSpringService
 import com.z.jwt.utils.defaultDateTimeFormat
-import com.z.zcoreblocking.domain.property.RequestAuthProperties
+import com.z.zcoreblocking.dto.property.RequestAuthProperties
 import com.z.zcoreblocking.security.filter.AuthTokenFilter
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -28,15 +29,23 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @Configuration
+@ConditionalOnClass(WebMvcConfigurer::class, WebSecurityConfigurerAdapter::class)
 @EnableConfigurationProperties(JwtProperties::class, RequestAuthProperties::class)
 class WebMvcSecurityBootstrapper {
     private val logger: Logger = LoggerFactory.getLogger(WebMvcSecurityBootstrapper::class.java)
 
     @Bean
-    @ConditionalOnMissingBean(value = [JwtSpringService::class])
-    fun jwtSpringService(jwtProperties: JwtProperties): JwtSpringService {
+    @ConditionalOnMissingBean(value = [JwtService::class])
+    fun jwtService(jwtProperties: JwtProperties): JwtService {
         logger.debug("Bootstrapping JwtSpringService Bean with $jwtProperties")
-        return JwtSpringService(JwtService(jwtProperties))
+        return JwtService(jwtProperties)
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(value = [JwtSpringService::class])
+    @ConditionalOnBean(JwtService::class)
+    fun jwtSpringService(jwtService: JwtService): JwtSpringService {
+        return JwtSpringService(jwtService)
     }
 
     @Bean

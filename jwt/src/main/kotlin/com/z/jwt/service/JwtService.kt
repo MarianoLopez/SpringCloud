@@ -11,11 +11,11 @@ import com.z.jwt.utils.asDate
 import com.z.jwt.utils.asLocalDateTime
 
 
-class JwtService(val jwtProperties: JwtProperties = JwtProperties()){
+open class JwtService(val jwtProperties: JwtProperties = JwtProperties()){
 	private val algorithm = Algorithm.HMAC512(jwtProperties.secretKey)
 
 	@Throws(JWTCreationException::class)
-	fun createToken(tokenRequest: TokenRequest): TokenResponse {
+	open fun createToken(tokenRequest: TokenRequest): TokenResponse {
 		val token = JWT.create().apply {
 			withSubject(tokenRequest.subject)
 			withIssuer(jwtProperties.issuer)
@@ -29,7 +29,7 @@ class JwtService(val jwtProperties: JwtProperties = JwtProperties()){
 	}
 
 	@Throws(JWTVerificationException::class)
-	fun decode(token:String): TokenResponse {
+	open fun decode(token:String): TokenResponse {
 		val verifier = JWT.require(algorithm).withIssuer(jwtProperties.issuer).build()
 		val jwt = verifier.verify(token.replace(jwtProperties.prefix, "").trim { it <= ' ' })
 		return TokenResponse(

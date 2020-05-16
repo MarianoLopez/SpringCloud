@@ -13,7 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
 
 @Component
-class UserAuthenticationProvider(@Qualifier("userService")
+class UserAuthenticationProvider(@Qualifier("userManagementService")
                                  private val userDetailsService: UserDetailsService,
                                  private val passwordEncoder: PasswordEncoder): AuthenticationProvider {
     private val logger: Logger = LoggerFactory.getLogger(UserAuthenticationProvider::class.java)

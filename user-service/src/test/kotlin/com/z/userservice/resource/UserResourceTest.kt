@@ -17,11 +17,9 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.test.context.support.WithMockUser
-import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ActiveProfiles("test")
 class UserResourceTest : BaseResourceIntegration() {
     @Autowired
     private lateinit var objectMapper: ObjectMapper
@@ -88,26 +86,7 @@ class UserResourceTest : BaseResourceIntegration() {
         }
     }
 
-    @DisplayName("POST user")
-    @Nested
-    inner class PostUser {
-        @Test
-        fun `POST valid user without authentication should return http 201`() {
-            val name = "Tester"
-            val password = "tester"
-            val email = "tester@tester.com"
-            val addUserRequest = AddUserRequest(password, name, email)
 
-            val response:UserResponse = webTestClient
-                    .perform(post(USER_RESOURCE).body(addUserRequest))
-                    .andExpect(status().isCreated)
-                    .get(objectMapper)
-
-            assertThat(response, notNullValue())
-            assertThat(response.name, `is`(name))
-            assertThat(response.email, `is`(email))
-        }
-    }
 
     @DisplayName("PUT user")
     @Nested

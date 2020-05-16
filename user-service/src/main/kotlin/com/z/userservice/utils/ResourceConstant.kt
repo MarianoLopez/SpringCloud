@@ -5,4 +5,5 @@ object ResourceConstant {
 
     const val USER_RESOURCE = API_V1.plus("user")
     const val LOGIN_RESOURCE = API_V1.plus("login")
+    const val SIGN_UP_RESOURCE = API_V1.plus("sign-up")
 }

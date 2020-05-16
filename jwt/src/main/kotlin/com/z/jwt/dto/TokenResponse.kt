@@ -5,10 +5,10 @@ import com.z.jwt.utils.defaultDateTimeFormat
 import java.time.LocalDateTime
 
 data class TokenResponse(
-    val token:String,
-    @get:JsonFormat(pattern = defaultDateTimeFormat)
-    val expires: LocalDateTime,
-    val claims:Map<String,Array<String>> = emptyMap(),
-    val subject:String,
-    val enabled:Boolean = true
+        var token:String = "",
+        @get:JsonFormat(pattern = defaultDateTimeFormat)
+        var expires: LocalDateTime = LocalDateTime.now(),
+        var claims:Map<String,Array<String>> = emptyMap(),
+        var subject:String = "",
+        var enabled:Boolean = true
 )

@@ -11,6 +11,7 @@
     <module>eureka-service</module>
     <module>gateway-service</module>
     <module>user-service</module>
+    <module>mail-service</module>
     <module>jwt</module>
     <module>zcore-module</module>
     <module>zcore-blocking</module>

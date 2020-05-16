@@ -1,6 +1,7 @@
 package com.z.userservice.service
 
-import com.z.userservice.domain.rabbitmq.RabbitmqProperties
+import com.z.zcoreblocking.dto.property.RabbitMqProperties
+import com.z.zcoreblocking.dto.queue.UserConfirmationToken
 import org.slf4j.LoggerFactory
 import org.springframework.amqp.AmqpException
 import org.springframework.amqp.rabbit.core.RabbitTemplate
@@ -8,12 +9,12 @@ import org.springframework.stereotype.Service
 
 @Service
 class RabbitMqService (private val rabbitTemplate: RabbitTemplate,
-                       private val rabbitmqProperties: RabbitmqProperties) {
+                       private val rabbitMqProperties: RabbitMqProperties) {
     private val logger = LoggerFactory.getLogger(RabbitMqService::class.java)
 
-    fun publish(data: Any) {
+    fun publishUserConfirmationToken(userConfirmationToken: UserConfirmationToken) {
         try {
-            rabbitTemplate.convertAndSend(rabbitmqProperties.exchange, rabbitmqProperties.routingKey, data)
+            rabbitTemplate.convertAndSend(rabbitMqProperties.exchange, rabbitMqProperties.routingKey, userConfirmationToken)
         } catch (amqpException: AmqpException) {
             logger.error(amqpException.localizedMessage)
         }
