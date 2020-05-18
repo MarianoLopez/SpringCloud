@@ -180,7 +180,7 @@ pipeline {
                     sh '/jenkins_scripts/dockerBuildAndPublish.sh user-service'
                 }
 
-                dir(path: 'user-service') {
+                dir(path: 'mail-service') {
                     unstash 'build-mail-service'
                     sh '/jenkins_scripts/dockerBuildAndPublish.sh mail-service'
                 }
