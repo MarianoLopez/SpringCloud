@@ -1,1 +1,4 @@
 .env
+/rabbitmq/etc/rabbitmq.conf
+/rabbitmq/data
+/rabbitmq/logs

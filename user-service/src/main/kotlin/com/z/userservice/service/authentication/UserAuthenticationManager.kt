@@ -1,6 +1,5 @@
 package com.z.userservice.service.authentication
 
-import com.z.userservice.service.authentication.UserAuthenticationProvider
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Component

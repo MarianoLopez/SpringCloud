@@ -1,7 +1,7 @@
 package com.z.userservice.resource
 
 
-import com.z.zcoreblocking.domain.ApiResponse
+import com.z.zcoreblocking.dto.ApiResponse
 import com.z.zcoreblocking.utils.exception.groupByFieldMessage
 import com.z.zcoreblocking.utils.exception.toApiResponse
 import org.springframework.http.ResponseEntity

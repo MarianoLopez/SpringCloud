@@ -2,7 +2,7 @@ package com.z.userservice.resource
 
 import com.z.jwt.dto.TokenResponse
 import com.z.userservice.dto.LoginRequest
-import com.z.userservice.service.LoginService
+import com.z.userservice.service.authentication.LoginService
 import com.z.userservice.utils.ResourceConstant.LOGIN_RESOURCE
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody

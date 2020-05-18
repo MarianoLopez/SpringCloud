@@ -80,6 +80,10 @@ pipeline {
                     stash(name: 'build-user-service', includes: 'target/**')
                 }
 
+                dir(path: 'mail-service') {
+                    sh '/jenkins_scripts/mavenBuild.sh ./pom.xml'
+                    stash(name: 'build-mail-service', includes: 'target/**')
+                }
             }
         }
 
@@ -174,6 +178,11 @@ pipeline {
                 dir(path: 'user-service') {
                     unstash 'build-user-service'
                     sh '/jenkins_scripts/dockerBuildAndPublish.sh user-service'
+                }
+
+                dir(path: 'user-service') {
+                    unstash 'build-mail-service'
+                    sh '/jenkins_scripts/dockerBuildAndPublish.sh mail-service'
                 }
 
             }

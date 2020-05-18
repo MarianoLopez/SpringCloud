@@ -1,6 +1,6 @@
 package com.z.zcoreblocking.utils.exception
 
-import com.z.zcoreblocking.domain.ApiResponse
+import com.z.zcoreblocking.dto.ApiResponse
 import org.springframework.validation.FieldError
 
 fun Exception.toApiResponse(): ApiResponse {

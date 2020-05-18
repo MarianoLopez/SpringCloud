@@ -2,7 +2,7 @@ package com.z.zcoreblocking.security.filter
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.z.jwt.service.JwtSpringService
-import com.z.zcoreblocking.domain.ApiResponse
+import com.z.zcoreblocking.dto.ApiResponse
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.security.core.context.SecurityContextHolder

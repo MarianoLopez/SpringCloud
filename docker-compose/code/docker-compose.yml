@@ -21,12 +21,28 @@ services:
     depends_on:
      - mariadb
      - eureka-service
+     - rabbitmq
     environment:
       EUREKA_HOST: eureka-service
       DB_HOST: mariadb
       DB_NAME: ${MYSQL_DATABASE}
       DB_USERNAME: ${MYSQL_USER}
       DB_PASSWORD: ${MYSQL_PASSWORD}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS}
+  mail-service:
+    image: ${NEXUS_URL}/mail-service:latest
+      depends_on:
+        - rabbitmq
+      environment:
+        RABBITMQ_HOST: rabbitmq
+        RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER}
+        RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS}
+        MAIL_HOST: smtp.gmail.com
+        MAIL_PORT: 587
+        MAIL_USERNAME: ${MAIL_USERNAME}
+        MAIL_PASSWORD: ${MAIL_PASSWORD}
   mariadb:
     image: mariadb
     ports:
@@ -34,5 +50,19 @@ services:
     env_file:
       - .env
     volumes:
+      - ./maria_data:/var/lib/mysql
       - ./maria_config/my.cnf:/etc/mysql/my.cnf
       - ./maria_scripts:/docker-entrypoint-initdb.d
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    volumes:
+      - ./rabbitmq/etc/:/etc/rabbitmq/
+      - ./rabbitmq/data/:/var/lib/rabbitmq/
+      - ./rabbitmq/logs/:/var/log/rabbitmq/
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+    ports:
+      - 5672:5672
+      - 15672:15672

@@ -1,4 +1,4 @@
-package com.z.zcoreblocking.domain.property
+package com.z.zcoreblocking.dto.property
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 
