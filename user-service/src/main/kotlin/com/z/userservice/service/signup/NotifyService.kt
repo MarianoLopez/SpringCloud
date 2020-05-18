@@ -34,6 +34,15 @@ class NotifyService (
         confirmationDao.save(createUserConfirmation(userConfirmationToken, status))
     }
 
+    @Transactional(propagation = REQUIRES_NEW)
+    fun confirm(userResponse: UserResponse) {
+        confirmationDao.save(
+            UserConfirmation(
+                id = UserConfirmationId(userId = userResponse.id, status = ConfirmationStatus.APPROVED),
+                username = userResponse.name, email = userResponse.email)
+        )
+    }
+
     private fun publishUserConfirmationToken(userConfirmationToken: UserConfirmationToken): ConfirmationStatus {
         return try {
             rabbitTemplate.convertAndSend(rabbitMqProperties.exchange, rabbitMqProperties.routingKey, userConfirmationToken)

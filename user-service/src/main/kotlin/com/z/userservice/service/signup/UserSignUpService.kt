@@ -5,6 +5,7 @@ import com.z.userservice.dao.UserDao
 import com.z.userservice.dto.AddUserRequest
 import com.z.userservice.dto.UpdateUserRequest
 import com.z.userservice.dto.event.AddUserEvent
+import com.z.userservice.dto.event.ConfirmUserEvent
 import com.z.userservice.service.encrypt.EncoderService
 import com.z.userservice.service.management.UserManagement
 import com.z.userservice.transformer.AddUserRequestTransformer
@@ -40,7 +41,9 @@ class UserSignUpService(
     }
 
     @Throws(JWTVerificationException::class, IllegalArgumentException::class)
+    @Transactional
     override fun confirm(token: String) {
-        userManagement.update(UpdateUserRequest(id = confirmationTokenService.getUserId(token), state = true))
+        val userResponse = userManagement.update(UpdateUserRequest(id = confirmationTokenService.getUserId(token), state = true))
+        applicationEventPublisher.publishEvent(ConfirmUserEvent(userResponse))
     }
 }
