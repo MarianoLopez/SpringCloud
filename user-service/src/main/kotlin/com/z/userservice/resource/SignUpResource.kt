@@ -1,7 +1,7 @@
 package com.z.userservice.resource
 
 import com.z.userservice.dto.AddUserRequest
-import com.z.userservice.service.user.UserSignUp
+import com.z.userservice.service.signup.UserSignUp
 import com.z.userservice.utils.ResourceConstant.SIGN_UP_RESOURCE
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

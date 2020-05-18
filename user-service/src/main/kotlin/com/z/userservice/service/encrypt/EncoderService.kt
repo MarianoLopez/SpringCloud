@@ -1,4 +1,4 @@
-package com.z.userservice.service
+package com.z.userservice.service.encrypt
 
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service

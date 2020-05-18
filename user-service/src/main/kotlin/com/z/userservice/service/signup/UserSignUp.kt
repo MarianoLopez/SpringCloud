@@ -1,4 +1,4 @@
-package com.z.userservice.service.user
+package com.z.userservice.service.signup
 
 import com.z.userservice.dto.AddUserRequest
 

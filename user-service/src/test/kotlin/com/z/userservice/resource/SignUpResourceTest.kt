@@ -23,7 +23,7 @@ class SignUpResourceTest:  BaseResourceIntegration() {
 
             webTestClient
                     .perform(post(SIGN_UP_RESOURCE).body(addUserRequest))
-                    .andExpect(status().isCreated)
+                    .andExpect(status().isAccepted)
         }
     }
 

@@ -1,10 +1,10 @@
-package com.z.userservice.service.user
+package com.z.userservice.service.management
 
 import com.z.userservice.dao.UserDao
 import com.z.userservice.dto.DeleteUserRequest
 import com.z.userservice.dto.UpdateUserRequest
 import com.z.userservice.dto.UserResponse
-import com.z.userservice.service.EncoderService
+import com.z.userservice.service.encrypt.EncoderService
 import com.z.userservice.transformer.UserDetailsTransformer
 import com.z.userservice.transformer.UserTransformer
 import com.z.userservice.utils.evaluate

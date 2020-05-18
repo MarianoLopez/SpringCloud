@@ -1,4 +1,4 @@
-package com.z.userservice.service.user
+package com.z.userservice.service.management
 
 import com.z.userservice.domain.User
 import com.z.userservice.dto.UserResponse

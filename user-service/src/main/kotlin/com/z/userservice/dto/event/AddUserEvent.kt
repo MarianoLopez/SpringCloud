@@ -1,6 +1,6 @@
 package com.z.userservice.dto.event
 
-import com.z.zcoreblocking.dto.queue.UserConfirmationToken
+import com.z.userservice.dto.UserResponse
 import org.springframework.context.ApplicationEvent
 
-data class AddUserEvent(val message: String = "", val data: UserConfirmationToken): ApplicationEvent(data)
+data class AddUserEvent(val data: UserResponse): ApplicationEvent(data)

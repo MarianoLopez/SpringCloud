@@ -1,13 +1,12 @@
-package com.z.userservice.service.user
+package com.z.userservice.service.signup
 
 import com.nhaarman.mockitokotlin2.*
-import com.z.jwt.dto.TokenResponse
-import com.z.jwt.service.JwtService
 import com.z.userservice.dao.UserDao
 import com.z.userservice.domain.User
-import com.z.userservice.dto.event.AddUserEvent
 import com.z.userservice.dto.AddUserRequest
-import com.z.userservice.service.EncoderService
+import com.z.userservice.dto.event.AddUserEvent
+import com.z.userservice.service.encrypt.EncoderService
+import com.z.userservice.service.management.UserManagement
 import com.z.userservice.transformer.AddUserRequestTransformer
 import com.z.userservice.transformer.UserTransformer
 import com.z.userservice.utils.UserTestUtils.buildUserResponse
@@ -33,7 +32,7 @@ class UserSignUpServiceTest {
     private lateinit var mockAddUserTransformer: AddUserRequestTransformer
     private lateinit var mockEncoderService: EncoderService
     private lateinit var mockApplicationEventPublisher: ApplicationEventPublisher
-    private lateinit var mockJwtService: JwtService
+    private lateinit var mockConfirmationTokenService: ConfirmationTokenService
     private lateinit var mockUserManagement: UserManagement
     private lateinit var userSignUp: UserSignUp
 
@@ -45,13 +44,13 @@ class UserSignUpServiceTest {
         mockApplicationEventPublisher = mock()
         mockEncoderService = mock()
         mockUserManagement = mock()
-        mockJwtService = mock()
+        mockConfirmationTokenService = mock()
 
         userSignUp = UserSignUpService(
                 userManagement = mockUserManagement, userDao = mockUserDao,
                 addUserRequestTransformer = mockAddUserTransformer, userTransformer = mockUserTransformer,
                 encoderService = mockEncoderService, applicationEventPublisher = mockApplicationEventPublisher,
-                jwtService = mockJwtService, validator = validator
+                confirmationTokenService = mockConfirmationTokenService, validator = validator
         )
     }
 
@@ -64,25 +63,18 @@ class UserSignUpServiceTest {
         val passwordEncoded = "\$2a\$10\$ztBuLyQC9g8iGcS5w46RmeiTvnq8AVmo7KEVjIiMt8/OYOBihYRcG"
         val user =  User(password = nonEncodedPassword)
         val userResponse = buildUserResponse(name = username, email = email)
-        val tokenResponse = TokenResponse()
 
-        whenever(mockAddUserTransformer.transform(addUserRequest)).thenReturn(user)
         whenever(mockAddUserTransformer.transform(addUserRequest)).thenReturn(user)
         whenever(mockEncoderService.encodeIfNotEmpty(nonEncodedPassword)).thenReturn(passwordEncoded)
         whenever(mockUserDao.save(user)).thenReturn(user)
         whenever(mockUserTransformer.transform(user)).thenReturn(userResponse)
-        whenever(mockJwtService.createToken(any())).thenReturn(tokenResponse)
+        doNothing().`when`(mockApplicationEventPublisher).publishEvent(any<AddUserEvent>())
 
         userSignUp.add(addUserRequest)
 
-        verify(mockJwtService).createToken(check {
-            assertThat(it.claims.containsKey("id"), `is`(true))
-        })
+
         verify(mockApplicationEventPublisher).publishEvent(check<AddUserEvent> {
-            assertThat(it.data.token, `is`(tokenResponse.token))
-            assertThat(it.data.userId, `is`(userResponse.id))
-            assertThat(it.data.username, `is`(username))
-            assertThat(it.data.email, `is`(email))
+            assertThat(it.data, `is`(userResponse))
         })
         verify(mockAddUserTransformer).transform(addUserRequest)
         verify(mockEncoderService).encodeIfNotEmpty(nonEncodedPassword)
