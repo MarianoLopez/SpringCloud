@@ -33,16 +33,16 @@ services:
       RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS}
   mail-service:
     image: ${NEXUS_URL}/mail-service:latest
-      depends_on:
-        - rabbitmq
-      environment:
-        RABBITMQ_HOST: rabbitmq
-        RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER}
-        RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS}
-        MAIL_HOST: smtp.gmail.com
-        MAIL_PORT: 587
-        MAIL_USERNAME: ${MAIL_USERNAME}
-        MAIL_PASSWORD: ${MAIL_PASSWORD}
+    depends_on:
+      - rabbitmq
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS}
+      MAIL_HOST: smtp.gmail.com
+      MAIL_PORT: 587
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
   mariadb:
     image: mariadb
     ports:

@@ -2,8 +2,8 @@ import React from "react";
 import {useSelector} from "react-redux";
 import {BrowserRouter as Router, Switch} from "react-router-dom";
 import {Grid, makeStyles} from "@material-ui/core";
-import {AdminHomePage, LoginPage, RegistrationPage, UserHomePage, UserListPage} from "./page/";
-import {ADMIN_HOME, ADMIN_USER_LIST, LOGIN_PATH, REGISTRATION_PATH, USER_HOME} from "../utils/path";
+import {AdminHomePage, LoginPage, RegistrationPage, ConfirmPage, UserHomePage, UserListPage} from "./page/";
+import {ADMIN_HOME, ADMIN_USER_LIST, CONFIRMATION_PATH, LOGIN_PATH, REGISTRATION_PATH, USER_HOME} from "../utils/path";
 import {ROLE_ADMIN, ROLE_USER} from "../utils/role";
 import {Footer, Header} from "../component";
 import Routes from "./Routes";
@@ -16,6 +16,7 @@ const createRouteItem = (path, roles, component, icon = null, text = null) => {
 const routes = [
     createRouteItem(LOGIN_PATH, [], LoginPage),
     createRouteItem(REGISTRATION_PATH, [], RegistrationPage),
+    createRouteItem(CONFIRMATION_PATH, [], ConfirmPage),
     createRouteItem(USER_HOME, [ROLE_USER], UserHomePage, AccountCircle, 'Home'),
     createRouteItem(ADMIN_HOME, [ROLE_ADMIN], AdminHomePage, AccountCircle, 'Home'),
     createRouteItem(ADMIN_USER_LIST, [ROLE_ADMIN], UserListPage, List, 'User List')

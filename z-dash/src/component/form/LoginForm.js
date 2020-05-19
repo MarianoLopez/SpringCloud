@@ -5,7 +5,7 @@ import {Face, Fingerprint} from '@material-ui/icons'
 import {blue} from "@material-ui/core/colors";
 import {password, username} from "../../utils/validation";
 import {Link} from "react-router-dom";
-import {REGISTRATION_PATH} from "../../utils/path";
+import {CONFIRMATION_PATH, REGISTRATION_PATH} from "../../utils/path";
 import Typography from "@material-ui/core/Typography";
 
 const useStyles = makeStyles((theme) => ({
@@ -65,6 +65,11 @@ export default ({onFormChange, handleLogin, isLoading, validations = {username, 
                     <Grid container justify="center" alignItems="center" className={classes.wrapper}>
                         <Typography variant="subtitle2">
                             <Link to={REGISTRATION_PATH}>Sing up</Link>
+                        </Typography>
+                    </Grid>
+                    <Grid container justify="center" alignItems="center" className={classes.wrapper}>
+                        <Typography variant="subtitle2">
+                            <Link to={CONFIRMATION_PATH}>Confirm account</Link>
                         </Typography>
                     </Grid>
                 </form>

@@ -1,4 +1,5 @@
 .env
+/maria_data
 /rabbitmq/etc/rabbitmq.conf
 /rabbitmq/data
 /rabbitmq/logs
