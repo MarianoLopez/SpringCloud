@@ -4,6 +4,8 @@ services:
     image: ${NEXUS_URL}/z-dash:latest
     ports:
       - 80:80
+    volumes:
+      - ./nginx.conf/:/etc/nginx/conf.d/
   eureka-service:
     image: ${NEXUS_URL}/eureka-service:latest
     ports:
