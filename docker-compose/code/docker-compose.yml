@@ -38,6 +38,9 @@ services:
     depends_on:
       - rabbitmq
     environment:
+      CONFIRMATION_FRONT_END_HOST: react-frontend
+      CONFIRMATION_FRONT_END_PORT: 80
+      EUREKA_HOST: eureka-service
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS}

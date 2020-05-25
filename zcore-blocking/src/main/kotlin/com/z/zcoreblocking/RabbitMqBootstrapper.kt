@@ -17,6 +17,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Primary
 import java.text.SimpleDateFormat
 
 @Configuration
@@ -27,20 +28,36 @@ class RabbitMqBootstrapper {
     class RabbitmqConfiguration(private val rabbitMqProperties: RabbitMqProperties) {
         private val logger = LoggerFactory.getLogger(RabbitMqBootstrapper::class.java)
 
+        companion object {
+            const val DEFAULT_QUEUE_BEAN = "queue"
+            const val DEFAULT_EXCHANGE_BEAN = "exchange"
+            const val DEFAULT_BINDING_BEAN = "binding"
+            const val DEAD_LETTER_QUEUE_BEAN = "deadLetterQueue"
+            const val DEAD_LETTER_SUFFIX = ".dlx"
+        }
+
         init {
             logger.debug("Rabbit MQ properties: $rabbitMqProperties")
         }
 
-        @Bean
-        @ConditionalOnMissingBean(Queue::class)
+        @Bean(DEFAULT_QUEUE_BEAN)
+        @Primary
+        @ConditionalOnMissingBean(name = [DEFAULT_QUEUE_BEAN])
         fun queue(): Queue {
-            return Queue(rabbitMqProperties.queue, true).apply {
-                logger.debug("Bootstrapping: $this")
-            }
+            val deadLetter = rabbitMqProperties.queue.plus(DEAD_LETTER_SUFFIX)
+            return QueueBuilder
+                    .durable(rabbitMqProperties.queue)
+                    .withArgument("x-dead-letter-routing-key", deadLetter)
+                    .withArgument("x-dead-letter-exchange", "") //tells the broker to use the default exchange
+                    .build()
+                    .apply {
+                        logger.debug("Bootstrapping: $this")
+                    }
         }
 
-        @Bean
-        @ConditionalOnMissingBean(Exchange::class)
+        @Bean(DEFAULT_EXCHANGE_BEAN)
+        @Primary
+        @ConditionalOnMissingBean(name = [DEFAULT_EXCHANGE_BEAN])
         fun exchange(): Exchange {
             val defaultExchange = DirectExchange(rabbitMqProperties.exchange)
             return when(rabbitMqProperties.exchangeType.trim().toUpperCase()) {
@@ -53,11 +70,20 @@ class RabbitMqBootstrapper {
             }
         }
 
-        @Bean
-        @ConditionalOnMissingBean(Binding::class)
-        @ConditionalOnBean(Queue::class, Exchange::class)
+        @Bean(DEFAULT_BINDING_BEAN)
+        @Primary
+        @ConditionalOnMissingBean(name = [DEFAULT_BINDING_BEAN])
+        @ConditionalOnBean(name = [DEFAULT_QUEUE_BEAN, DEFAULT_EXCHANGE_BEAN])
         fun binding(queue: Queue, exchange: Exchange): Binding {
             return BindingBuilder.bind(queue).to(exchange).with(rabbitMqProperties.routingKey).noargs().apply {
+                logger.debug("Bootstrapping: $this")
+            }
+        }
+
+        @Bean(DEAD_LETTER_QUEUE_BEAN)
+        @ConditionalOnMissingBean(name = [DEAD_LETTER_QUEUE_BEAN])
+        fun deadLetterQueue(): Queue {
+            return Queue(rabbitMqProperties.queue.plus(DEAD_LETTER_SUFFIX)).apply {
                 logger.debug("Bootstrapping: $this")
             }
         }

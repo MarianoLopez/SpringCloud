@@ -17,9 +17,9 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export default ({handleSubmit, isLoading, disableAll}) => {
+export default ({token, handleSubmit, isLoading, disableAll}) => {
     const [formState, setFormState] = useState({
-        token: ''
+        token: token
     });
 
     const onFormChange = (event) => {
@@ -37,7 +37,7 @@ export default ({handleSubmit, isLoading, disableAll}) => {
                 <Paper style={{padding: 20}}>
                     <form autoComplete="false" onSubmit={event =>  handleSubmit(event, formState)} onChange={onFormChange}>
                         <Grid item>
-                            <TextField id="token" label="token" name="token" fullWidth autoFocus disabled={disableAll}/>
+                            <TextField id="token" label="token" name="token" value={formState.token} fullWidth autoFocus disabled={disableAll}/>
                         </Grid>
                         <Grid container justify="center" style={{marginTop: '10px'}} className={classes.wrapper}>
                             <Button variant="outlined" color="primary"

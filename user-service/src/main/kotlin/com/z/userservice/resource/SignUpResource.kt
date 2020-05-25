@@ -17,7 +17,7 @@ class SignUpResource (private val userSignUpService: UserSignUp) {
         return ResponseEntity.status(HttpStatus.ACCEPTED).build()
     }
 
-    @GetMapping
+    @PutMapping
     fun confirm(@RequestParam confirmationToken:String): ResponseEntity<Void> {
         this.userSignUpService.confirm(confirmationToken)
         return ResponseEntity.status(HttpStatus.CREATED).build()

@@ -1,14 +1,17 @@
 package com.z.mailservice.service;
 
-import com.z.mailservice.dto.EmailRequest;
-import com.z.mailservice.transformer.EmailRequestTransformer;
+import com.z.zcoreblocking.dto.queue.UserConfirmationToken;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.retry.RetryCallback;
+import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -16,23 +19,27 @@ import java.util.concurrent.Executors;
 @RequiredArgsConstructor
 @Slf4j
 public class EmailService {
+    private final RetryTemplate retryTemplate;
     private final JavaMailSender javaMailSender;
-    private final EmailRequestTransformer emailRequestTransformer;
+    private final ConfirmNewAccountService confirmNewAccountService;
+
     private Executor executor = Executors.newCachedThreadPool();
 
-    void sendUserTokenConfirmation(EmailRequest emailRequest) {
-        this.sendSimpleMessage(emailRequestTransformer.transform(emailRequest));
+    CompletableFuture<Boolean> sendUserTokenConfirmation(UserConfirmationToken userConfirmationToken) throws MessagingException {
+        var message = javaMailSender.createMimeMessage();
+        confirmNewAccountService.setHtmlTemplate(message, userConfirmationToken);
+        return this.sendMessage(message);
     }
 
-    private void sendSimpleMessage(SimpleMailMessage message) {
-        executor.execute(() -> {
-            try {
-                javaMailSender.send(message);
-                log.debug("Mail (to {}, subject {}) sent", message.getTo(), message.getSubject());
-            } catch (MailException mailException) {
-                log.error("Mail Exception: to {}, subject {}, error {}",
-                        message.getTo(), message.getSubject(), mailException.getLocalizedMessage());
-            }
-        });
+
+    private CompletableFuture<Boolean> sendMessage(MimeMessage message) throws MessagingException {
+        log.debug("Mail (to {}, subject {})", message.getAllRecipients(), message.getSubject());
+
+        return CompletableFuture.supplyAsync(()-> retryTemplate.execute((RetryCallback<Boolean, MailException>) retryContext -> {
+            log.debug("Retry info: {}", retryContext.toString());
+            javaMailSender.send(message);
+            log.debug("Mail sent");
+            return true;
+        }, arg -> false), executor);
     }
 }
